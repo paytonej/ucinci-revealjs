@@ -14,9 +14,9 @@ color:
   primary: uc_red
 
 logo: 
-  small: resources/uc-monogram.svg
-  medium: resources/cincinnati.svg
-  large: resources/UC_ID_PrimaryBlackRed.svg
+  small: _extensions/ucinci/images/uc-monogram.svg
+  medium: _extensions/ucinci/images/cincinnati.svg
+  large: _extensions/ucinci/images/UC_ID_PrimaryBlackRed.svg
 
 typography:
   fonts:

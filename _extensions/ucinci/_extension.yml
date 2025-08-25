@@ -1,36 +1,36 @@
-title: ucinci-revealjs
+title: ucinci
 author: Eric J Payton
 version: 1.0.0
 quarto-required: ">=1.7.0"
 contributes:
   formats:
     revealjs:
-      theme: [default, ucinci.scss]
-    slide-number: c/t
-    width: 1920
-    height: 1080
-    incremental: false
-    controls: true
-    progress: true
-    history: true
-    navigation-mode: linear
-    resources:
-      - images/UC_ID_PrimaryWhite.svg
-    include-in-header:
-      - text: |
-          <style>
-            body:has(.present.hide-logo) {
-            --logo-display: none;
-              }
-          .slide-logo {
-            display: var(--logo-display, block) !important;
-              }
-            </style>
-    include-after-body:
-      - resources/ucinci-nav.js
-      - resources/coeos.html
-    template-partials:
-      - resources/title-slide.html
+      theme: [ucinci.scss]
+      slide-number: c/t
+      width: 1920
+      height: 1080
+      incremental: false
+      controls: true
+      progress: true
+      history: true
+      navigation-mode: linear
+      include-in-header:
+        - text: |
+            <style>
+              body:has(.present.hide-logo) {
+              --logo-display: none;
+                }
+            .slide-logo {
+              display: var(--logo-display, block) !important;
+                }
+              </style>
+      include-after-body:
+        - _extensions/ucinci/resources/ucinci-nav.js
+        - _extensions/ucinci/resources/coeos.html
+      template-partials:
+        - _extensions/ucinci/resources/title-slide.html
       # Title background controls:
-    title-slide-background: "images/baldwin.webp"
-    title-slide-logo: "images/uc-mme-stacked-white.png"
+      title-slide-background: "_extensions/ucinci/images/baldwin.webp"
+      title-slide-logo: "_extensions/ucinci/images/uc-mme-stacked-white.png"
+      resources: 
+        - _extensions/ucinci/images/*

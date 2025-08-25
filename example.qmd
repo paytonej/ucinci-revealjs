@@ -1,9 +1,6 @@
 ---
 title: "ucinci-revealjs Example"
-format:
-  revealjs: default
-revealjs-plugins:
-  - ucinci-revealjs
+format: ucinci-revealjs
 ---
 
 # In the morning

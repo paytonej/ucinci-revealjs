@@ -11,26 +11,13 @@ author:
       - name: University of Cincinnati
         city: Cincinnati
         state: OH
-  - name: Sajjad Hasan
-    jobtitle: Graduate Research Associate
-    orcid: 0000-0002-1234-5678
+  - name: Liz Lemon
+    jobtitle: Head Writer
     affiliations:
-      - name: University of Cincinnati
-        city: Cincinnati
-        state: OH
-  - name: Weisheng Cao
-    jobtitle: Vice President
-    affiliations:
-      - name: Computherm, LLC
-        city: Middleton
-        state: WI
-  - name: Fan Zhang
-    jobtitle: President
-    email: fan.zhang@computherm.com
-    affiliations:
-      - name: Computherm, LLC
-        city: Middleton
-        state: WI
+      - name: TGS
+        city: New York
+        state: NY 
+format: ucinci-revealjs
 ---
 
 ## This package implements the University of Cincinnati color scheme for Quarto revealjs presentations
@@ -92,7 +79,7 @@ Without applying any of the custom classes to the slides, the `ucinci` style pac
 
 To use your own background on the title slide, the `title-slide-background` can be defined in your Quarto document's YAML header. The file location should be relative to your main document. Included within the resources folder is the picture of Baldwin Hall used in the College of Engineering and Applied Science official PowerPoint template as a webp file:
 
-`title-slide-background: "resources/baldwin.webp"`
+`title-slide-background: "_extensions/ucinci/images/baldwin.webp"`
 
 ## Title slide background image modifications
 
@@ -110,17 +97,17 @@ The text and navigation colors on the title slide can be controlled through the 
 Additional custom classes could be added by modifying `ucinci.scss`.
 
 When using a background image with transparency, you can control the background color within the UC color schema with these same classes. For example,
-`title-slide-background: "resources/baldwin.webp"`
+`title-slide-background: "_extensions/ucinci/images/baldwin.webp"`
 `title-slide-classes: [beyond-black-gradient]`
 will render Baldwin Hall with a black background instead of UC red.
 
 ## Title slide logo
 
 The package places a UC logo on each page except for the title page. A logo can be placed on the title slide using the YAML parameter `title-slide-logo`. This enables different logos to be used depending on the title slide appearance, and enables different unit lockups to be used.
-`title-slide-logo: "resources/my_unit_lockup.png"`
+`title-slide-logo: "_extensions/ucinci/images/my_unit_lockup.png"`
 
 The resources folder contains a logo for UC and lockups for the College of Engineering and Applied Science and the Department of Mechanical and Materials Engineering.
-`title-slide-logo: "resources/UC_MME_STACKED-04-05.png"`
+`title-slide-logo: "_extensions/ucinci/images/UC_MME_STACKED-04-05.png"`
 
 ## Title slide extensions beyond standard Quarto
 
@@ -137,34 +124,34 @@ The color names are identical to those defined in the UC color palette. I don't 
 
 The background images in this section come from the CEAS PowerPoint template, enabling the user to recreate this template in Revealjs presentations. They are provided in the resources folder.
 
-## Logo-shadow {.uc-red-flat background-image="resources/logo-shadow.jpg"}
+## Logo-shadow {.uc-red-flat background-image="_extensions/ucinci/images/logo-shadow.jpg"}
 
-The `resources/logo-shadow.jpg` background works well with the `.uc-red.flat` or `.official-uc-red-gradient` classes. To use `logo-shadow.jpg` as a background, apply the background-image attribute with a class that changes the text color from the default like this:
+The `_extensions/ucinci/images/logo-shadow.jpg` background works well with the `.uc-red.flat` or `.official-uc-red-gradient` classes. To use `logo-shadow.jpg` as a background, apply the background-image attribute with a class that changes the text color from the default like this:
 ```{markdown}
-## Logo-shadow {.uc-red-flat background-image="resources/logo-shadow.jpg"}
+## Logo-shadow {.uc-red-flat background-image="_extensions/ucinci/images/logo-shadow.jpg"}
 ```
 
-## Baldwin-Alt {.uc-red-flat background-image="resources/baldwin-alt.jpg"}
+## Baldwin-Alt {.uc-red-flat background-image="_extensions/ucinci/images/baldwin-alt.jpg"}
 
-The `resources/baldwin-alt.jpg` background is included for completeness. This is part of the CEAS powerpoint template and differs from the other picture of Baldwin Hall through transparency in the bottom left triangular region.
+The `_extensions/ucinci/images/baldwin-alt.jpg` background is included for completeness. This is part of the CEAS powerpoint template and differs from the other picture of Baldwin Hall through transparency in the bottom left triangular region.
 
 Use of this background is not recommended at this time because it differs in color display from `baldwin.webp`, the image used for the title slide. In the case of `baldwin.webp`, I have modified it such that the image is formed by an alpha layer overlaid on the correct UC red web color, `#E00122`. If you really want to use the original PowerPoint background image rather than the one with improved colors, you can find it in the resources folder as `baldwin-orig.jpg`.
 
-## Electronics {.uc-red-flat background-image="resources/electronics.jpg"}
+## Electronics {.uc-red-flat background-image="_extensions/ucinci/images/electronics.jpg"}
 
-The electronics background image is `resources/electronics.jpg`. It is included for completeness only. Despite being part of the CEAS powerpoint template, it differs from the UC official web colors in a way that seems more apparent in revealjs than in PowerPoint, similar to `baldwin-alt.jpg`.
+The electronics background image is `_extensions/ucinci/images/electronics.jpg`. It is included for completeness only. Despite being part of the CEAS powerpoint template, it differs from the UC official web colors in a way that seems more apparent in revealjs than in PowerPoint, similar to `baldwin-alt.jpg`.
 
-## Diagonals {.uc-red-flat background-image="resources/diagonals.jpg"}
+## Diagonals {.uc-red-flat background-image="_extensions/ucinci/images/diagonals.jpg"}
 
-The `resources/diagonal.jpg` background is included for completeness, but is not recommended at this time as this package is currently written to make logos, navigation elements, page numbers, and the footer to render as the same color. If you really wanted to use this background, probably the `.black-and-white` class is your only option. However, this would not meet the [UC color combination guidelines](https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity/color.html). It is not possible to meet the style guidelines with the *current* background classes in `ucinci.scss`. I might try to add independent control of the colors of navigation elements, logo, footer, and page numbering in a future release to better work with different background images.
+The `_extensions/ucinci/images/diagonal.jpg` background is included for completeness, but is not recommended at this time as this package is currently written to make logos, navigation elements, page numbers, and the footer to render as the same color. If you really wanted to use this background, probably the `.black-and-white` class is your only option. However, this would not meet the [UC color combination guidelines](https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity/color.html). It is not possible to meet the style guidelines with the *current* background classes in `ucinci.scss`. I might try to add independent control of the colors of navigation elements, logo, footer, and page numbering in a future release to better work with different background images.
 
-## Element-header {.black-and-white background-image="resources/element-header.jpg"}
+## Element-header {.black-and-white background-image="_extensions/ucinci/images/element-header.jpg"}
 
-The `resources/element-header.jpg` background is included for completeness, but is not recommended as the text placement in revealjs will not reliably fall on top of the title as the page is resized.
+The `_extensions/ucinci/images/element-header.jpg` background is included for completeness, but is not recommended as the text placement in revealjs will not reliably fall on top of the title as the page is resized.
 
-## Plain-header {.black-and-white background-image="resources/plain-header.jpg"}
+## Plain-header {.black-and-white background-image="_extensions/ucinci/images/plain-header.jpg"}
 
-The `resources/plain-header.jpg` background is also included for completeness, but is not recommended as the text placement in revealjs will not reliably fall on top of the title as the page is resized.
+The `_extensions/ucinci/images/plain-header.jpg` background is also included for completeness, but is not recommended as the text placement in revealjs will not reliably fall on top of the title as the page is resized.
 
 # Extended capabilities
 
