@@ -1,4 +1,4 @@
-# ucinci-revealjs extension For Quarto
+# ucinci-revealjs extension for Quarto
 
 This extension provides an *unofficial* custom `revealjs` theme designed for creating University of Cincinnati (UC) branded presentations. It incorporates UC colors, logos, and typographic styles to create professional slide decks following UC brand guidelines.
 
