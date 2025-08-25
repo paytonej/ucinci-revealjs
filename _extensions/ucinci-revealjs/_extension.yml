@@ -1,0 +1,36 @@
+title: ucinci-revealjs
+author: Eric J Payton
+version: 1.0.0
+quarto-required: ">=1.7.0"
+contributes:
+  formats:
+    revealjs:
+      theme: [default, ucinci.scss]
+	  slide-number: c/t
+	  width: 1920
+	  height: 1080
+	  incremental: false
+	  controls: true
+	  progress: true
+	  history: true
+	  navigation-mode: linear
+	  resources:
+		  - images/UC_ID_PrimaryWhite.svg
+	  include-in-header:
+		  - text: |
+		  		<style>
+		  	  	body:has(.present.hide-logo) {
+		  	  	--logo-display: none;
+	  	  			}
+	  			.slide-logo {
+	  		  	display: var(--logo-display, block) !important;
+  		  			}
+  			  	</style>
+	  include-after-body:
+		  - resources/ucinci-nav.js
+		  - resources/coeos.html
+	  template-partials:
+		  - resources/title-slide.html
+  	  # Title background controls:
+	  title-slide-background: "images/baldwin.webp"
+	  title-slide-logo: "images/uc-mme-stacked-white.png"
