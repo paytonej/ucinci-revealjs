@@ -141,7 +141,7 @@ Use of this background is not recommended at this time because it differs in col
 
 The electronics background image is `_extensions/ucinci/images/electronics.jpg`. It is included for completeness only. Despite being part of the CEAS powerpoint template, it differs from the UC official web colors in a way that seems more apparent in revealjs than in PowerPoint, similar to `baldwin-alt.jpg`.
 
-## Diagonals {.uc-red-flat background-image="_extensions/ucinci/images/diagonals.jpg"}
+## Diagonals {.black-and-white background-image="_extensions/ucinci/images/diagonals.jpg"}
 
 The `_extensions/ucinci/images/diagonal.jpg` background is included for completeness, but is not recommended at this time as this package is currently written to make logos, navigation elements, page numbers, and the footer to render as the same color. If you really wanted to use this background, probably the `.black-and-white` class is your only option. However, this would not meet the [UC color combination guidelines](https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity/color.html). It is not possible to meet the style guidelines with the *current* background classes in `ucinci.scss`. I might try to add independent control of the colors of navigation elements, logo, footer, and page numbering in a future release to better work with different background images.
 
