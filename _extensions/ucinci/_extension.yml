@@ -32,5 +32,9 @@ contributes:
       # Title background controls:
       title-slide-background: "images/baldwin.webp"
       title-slide-logo: "images/uc-mme-stacked-white.png"
+      mathjax: null
+      html-math-method:
+        method: mathjax
+        url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
       resources: 
         - _extensions/paytonej/ucinci/images/*
