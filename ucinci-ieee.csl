@@ -337,25 +337,17 @@
       <!-- Author(s) -->
       <text macro="author" suffix=", "/>
       <!-- Rest of Citation -->
-      <choose>
+      <choose match="any">
         <!-- Specific Formats -->
         <if type="article-journal">
-          <group delimiter=", ">
+          <group delimiter=", " suffix=".">
             <text macro="title"/>
-            <text variable="container-title" font-style="italic" form="short"/>
-            <text macro="locators"/>
-            <text macro="page"/>
             <text macro="issued"/>
-            <text macro="status"/>
+            <group delimiter=": ">
+              <text macro="publisher" font-style="italic"/>
+              <text variable="number" font-style="bold"/>
+            </group>
           </group>
-          <choose>
-            <if variable="URL DOI" match="none">
-              <text value="."/>
-            </if>
-            <else>
-              <text value=","/>
-            </else>
-          </choose>
           <text macro="access"/>
         </if>
         <else-if type="paper-conference speech" match="any">
@@ -420,17 +412,6 @@
             <text macro="issued" prefix="(" suffix=")"/>
             <text variable="genre"/>
             <text macro="publisher"/>
-          </group>
-          <text macro="access"/>
-        </else-if>
-        <else-if type="article">
-          <group delimiter=", " suffix=".">
-            <text macro="title"/>
-            <text macro="issued"/>
-            <group delimiter=": ">
-              <text macro="publisher" font-style="italic"/>
-              <text variable="number"/>
-            </group>
           </group>
           <text macro="access"/>
         </else-if>
