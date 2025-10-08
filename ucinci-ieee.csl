@@ -115,7 +115,7 @@
   </macro>
 <macro name="author">
   <choose>
-    <if type="speech presentation">
+    <if type="speech presentation" match="any">
       <names variable="author">
         <name and="text" delimiter=", " initialize-with="." font-style="italic"/>
       </names>

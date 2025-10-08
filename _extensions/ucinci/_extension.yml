@@ -9,7 +9,7 @@ contributes:
       slide-number: c/t
       width: 1920
       height: 1080
-      incremental: false
+      incremental: true
       controls: true
       progress: true
       history: true
