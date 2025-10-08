@@ -339,7 +339,11 @@
       <!-- Rest of Citation -->
       <choose match="any">
         <!-- Specific Formats -->
+<<<<<<< HEAD
         <if type="article-journal">
+=======
+        <if type="article">
+>>>>>>> 94dbbac9f06a58b7bd13766d3cb2131d033ad063
           <group delimiter=", " suffix=".">
             <text macro="title"/>
             <text macro="issued"/>
