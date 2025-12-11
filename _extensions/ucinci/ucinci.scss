@@ -2,11 +2,6 @@
  * UC theme for reveal.js (Quarto)
  **/
 
-// include UC-specific fonts. ref: https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity/typography.html
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Gentium+Basic:wght@400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&display=swap');
-
 // UC COLORS. ref: https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity/color.html
 // Note that all colors follow the naming convention from UC marketing & comms. I have no idea why they call regular black "uc black" but regular white doesn't get called "uc white." 
 
@@ -42,10 +37,19 @@ $tangeman-tan: #eadbc1;
   --tangeman-tan: #{$tangeman-tan};
 }
 
+// include UC-specific fonts. ref: https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity/typography.html
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gentium+Basic:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;600;700&display=swap');
+
+
 /*-- scss:defaults --*/
 
 // fonts
 $font-family-sans-serif: "Open Sans", "Arial", sans-serif !default;
+$font-family-monospace: "Fira Mono", "Courier New", monospace !default;
+$font-family-serif: "Gentium Basic", "Times New Roman", serif !default;
 $presentation-heading-font: "Jost", "Open Sans", "Arial", sans-serif !default;
 
 // colors
@@ -55,8 +59,8 @@ $link-color: $uc-red !default;
 $link-color-hover: $uc-dark-red !default;
 $presentation-heading-color: $uc-red !default;
 
-$code-bg: $body-color !default;
-$code-color: $body-bg !default;
+$code-bg: $main-street-mist !default;
+$code-color: $uc-dark-red !default;
 
 $code-block-bg: $grey !default;
 $code-block-border-color: $body-color !default;

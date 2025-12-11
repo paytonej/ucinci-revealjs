@@ -1,0 +1,60 @@
+meta:
+  name:
+    full: "University of Cincinnati"
+    short: "UC"
+  link: https://www.uc.edu
+  description: |
+    The University of Cincinnati (UC) is a leading urban public research university known for inventing cooperative education and for its strong emphasis on experience-based learning alongside academic excellence.
+  founded: 1819
+
+color:
+  palette:
+    # UC Primary Colors
+    # | Background | Allowed Text Options
+    # |----------------------------------|----------------------------------|
+    # | uc_red, uc_black, bearcats_black | white
+    # | white                            | uc_black, uc_red, bearcats_black |
+    uc_red: "#e00122"
+    uc_black: "#000000"
+    white: "#ffffff"
+
+    # Secondary Colors
+    uc_dark_red: "#b8011c"
+    grey: "#f3f3f3"
+
+    # Extended Palette: May be used for accents but not for text
+    calhoun_maroon: "#890519"
+    steger_silver: "#a7a5aa"
+    main_street_mist: "#e0dfe3"
+    bearcats_black: "#333333"
+    gettler_gold: "#d1b179"
+    tangeman_tan: "#eadbc1"
+
+  background: white
+  foreground: bearcats_black
+  primary: uc_red
+  light: white
+  dark: uc_black
+
+
+logo:
+  small: _extensions/paytonej/ucinci/images/uc-monogram.svg
+  medium: _extensions/paytonej/ucinci/images/cincinnati.svg
+  large: _extensions/paytonej/ucinci/images/uc-large.svg
+
+typography:
+  fonts:
+    - family: Open Sans, Arial, sans-serif;
+      source: google
+    - family: Jost, Open Sans, Arial, sans-serif;
+      source: google
+    - family: Gentium Book Basic, Alegreya, Literata, EBGaramond, Times New Roman, serif;
+      source: google
+    - family: Fira Mono, Inconsolata, Roboto Mono, Courier New, monospace;
+      source: google
+  base: 
+    family: "Open Sans"
+  headings: 
+    family: "Jost"
+  monospace: 
+    family: "Inconsolata"

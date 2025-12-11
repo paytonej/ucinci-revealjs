@@ -1,0 +1,29 @@
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{geometry}
+
+% Define the macro for creating a grid
+\newcommand{\drawGrid}[3]{ % #1: Width, #2: Height, #3: Units
+    \newlength{\gridWidth}
+    \newlength{\gridHeight}
+    \setlength{\gridWidth}{#1#3}
+    \setlength{\gridHeight}{#2#3}
+    
+    \begin{wrapfigure}{r}{\gridWidth}
+        \vspace{-\baselineskip} % Adjust vertical alignment
+        \begin{tikzpicture}[x=0.2#3, y=0.2#3] % Scale each grid unit to 0.2#3
+            % Outer border
+            \draw[thick] (0, 0) rectangle (#1/0.2, -#2/0.2); 
+            % Draw lighter grid lines
+            \foreach \x in {0, 0.2,...,#1}
+                \draw[very thin, gray] (\x/0.2, 0) -- (\x/0.2, -#2/0.2);
+            \foreach \y in {0, 0.2,...,#2}
+                \draw[very thin, gray] (0, -\y/0.2) -- (#1/0.2, -\y/0.2);
+            % Draw darker lines every inch
+            \foreach \x in {0, 1,...,#1}
+                \draw[thin, black] (\x/0.2, 0) -- (\x/0.2, -#2/0.2);
+            \foreach \y in {0, 1,...,#2}
+                \draw[thin, black] (0, -\y/0.2) -- (#1/0.2, -\y/0.2);
+        \end{tikzpicture}
+    \end{wrapfigure}
+}

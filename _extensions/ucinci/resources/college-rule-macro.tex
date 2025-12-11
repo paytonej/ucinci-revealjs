@@ -1,0 +1,13 @@
+\usepackage{tikz}
+\usepackage{geometry}
+
+% Define the macro for creating lined spaces
+\newcommand{\linedSpace}[1]{
+    \vspace{0.71cm}
+    \begin{tikzpicture}
+        \foreach \i in {1,...,#1}
+        {
+            \draw[thick] (0, -\i * 0.71) -- (\linewidth, -\i * 0.71);
+        }
+    \end{tikzpicture}
+}
