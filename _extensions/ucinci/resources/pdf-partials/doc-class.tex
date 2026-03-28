@@ -1,0 +1,40 @@
+\DocumentMetadata{
+  lang        = $lang$,
+  pdfstandard = ua-2,
+  pdfstandard = a-4f, %or a-4
+  tagging=on,
+  tagging-setup={math/setup=mathml-SE} 
+}
+\documentclass[
+$for(babel-otherlangs)$
+  $babel-otherlangs$,
+$endfor$
+$if(babel-lang)$
+  $babel-lang$,
+$endif$
+$if(fontsize)$
+  $fontsize$,
+$endif$
+$if(papersize)$
+  $papersize$paper,
+$endif$
+$for(classoption)$
+  $classoption$$sep$,
+$endfor$
+]{$documentclass$}
+
+\usepackage{fancyhdr}
+\usepackage[includeheadfoot,margin=0.8in]{geometry}
+\usepackage{xcolor}
+\pagestyle{fancy}
+\fancypagestyle{firstpage}{
+    \fancyhead[L]{\includegraphics{"_extensions/paytonej/ucinci/images/uc-logo.png"}}
+    \fancyhead[C]{}
+    \fancyhead[R]{}
+}
+\fancyhf{}
+\fancyhead[LE]{\nouppercase{$subtitle$ \hfill \leftmark}}
+\fancyhead[RO]{\nouppercase{\leftmark \hfill $subtitle$}}
+
+% Accessibility packages
+\usepackage{microtype} % Improves text appearance with better spacing, removes font ligatures

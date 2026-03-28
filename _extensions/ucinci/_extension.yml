@@ -37,9 +37,11 @@ contributes:
         - resources/ucinci-nav.js
         - resources/coeos.html
       template-partials:
-        - resources/title-slide.html
+        - resources/revealjs-partials/title-slide.html
       # Title background controls:
       title-slide-background: "images/baldwin.webp"
       title-slide-logo: "images/uc-mme-stacked-white.png"
+      css:
+        - resources/revealjs-supplement.css
       resources: 
         - _extensions/paytonej/ucinci/images/*
