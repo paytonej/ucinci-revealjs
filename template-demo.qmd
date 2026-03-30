@@ -124,7 +124,7 @@ The color names are identical to those defined in the UC color palette. I don't 
 
 ## Add a source citation to the bottom of the slide
 
-When you have a source that you want to cite on a slide, you can add the `.source-citation` class to a div to place it in the bottom right of the slide. For example, `[This is a source citation]{.source-citation}` 
+When you have a source that you want to cite on a slide, you can add the `.source-citation` class to a div to place it in the bottom right of the slide. For example, `[This is a source citation]{.source-citation}`
 
 or
 
@@ -139,6 +139,26 @@ will place "This is a source citation" in tiny gray font at the bottom of the sl
 ::: {.source-citation}
 This is a source citation. Isn't that useful?
 :::
+
+## Make figure captions not extend beyond the width of the image
+
+In the reveal css, the figure captions are allowed to go the full width of the slide. This can result in them being offset from their images.
+
+We add a class `.caption-match-image` that can fix this.
+
+In can be invoked in two ways. The first is to add the class to the image element itself:
+
+```{markdown}
+![Caption](image.png){.caption-match-image}
+```
+
+The second is to wrap the image in a div with the class:
+
+```{markdown}
+::: {.caption-match-image}
+![Caption](image.png)
+:::
+```
 
 # Other official UC slide background images
 

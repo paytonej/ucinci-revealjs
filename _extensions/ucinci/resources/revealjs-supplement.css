@@ -78,3 +78,48 @@ See https://en.wikibooks.org/wiki/LaTeX/Fonts#Font_sizes
 .reveal .slides section:has(.source-citation) {
   padding-bottom: 3.5em;
 }
+
+/* Keep captions bounded to image width instead of full slide width.
+   Usage: ![Caption](image.png){.caption-match-image}
+   Quarto places the class directly on the <figure> element. */
+.reveal .slides section figure.caption-match-image {
+  display: inline-block; /* shrink to intrinsic image width */
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Caption inherits figure width; text wraps within image edges */
+.reveal .slides section figure.caption-match-image > figcaption,
+.reveal .slides section figure.caption-match-image > p.caption {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
+/* Also cover the div-wrapper approach:
+   ::: {.caption-match-image}
+   ![Caption](image.png)
+   ::: */
+.reveal .slides section div.caption-match-image {
+  text-align: center;
+}
+
+.reveal .slides section div.caption-match-image > figure {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reveal .slides section div.caption-match-image > figure > figcaption,
+.reveal .slides section div.caption-match-image > figure > p.caption {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
