@@ -14,6 +14,7 @@ contributes:
       controls: true
       progress: true
       history: true
+      embed-resources: true
       navigation-mode: linear
       html-math-method:
         method: mathjax

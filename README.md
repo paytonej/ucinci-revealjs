@@ -1,8 +1,8 @@
 # ucinci-revealjs extension for Quarto
 
-This extension provides an *unofficial* custom `revealjs` theme designed for creating University of Cincinnati (UC) branded presentations. It incorporates UC colors, logos, and typographic styles to create professional slide decks following UC brand guidelines.
+This extension provides an *unofficial* custom `revealjs` theme for the University of Cincinnati (UC) branded presentations.  It incorporates UC colors, logos, and typographic styles to create professional slide decks following the typography and color palette of the University of Cincinnati brand guidelines. 
 
-Description: This extension provides an *unofficial* custom `revealjs` theme for the University of Cincinnati, following the typography and color palette of the University of Cincinnati. It includes a branding yaml, images, and logos for creating presentations based on the official College of Engineering and Applied Science PowerPoint template as of Spring 2025.
+The package includes a branding yaml, images, and logos for creating presentations based on the official College of Engineering and Applied Science PowerPoint template as of Spring 2025.
 
 ## Installing
 
@@ -23,11 +23,13 @@ To use the ucinci-revealjs theme in your Quarto presentation, specify it as a fo
 format: ucinci-revealjs
 ```
 
-## Example
+## Examples
 
-You can find usage examples here
-- Documentation of the capabilities can be found here: [template-demo.qmd](template-demo.qmd)
-- Here is the source code for a minimal example: [example.qmd](example.qmd).
+
+- Documentation of the capabilities can be found in this example: <https://paytonej.github.io/ucinci-revealjs/template-demo.html>
+   - The source code for the example can be found here: [template-demo.qmd](template-demo.qmd)
+- A minimal example can be viewed at <https://paytonej.github.io/ucinci-revealjs/minimal-example.html>
+  - Here is the source code for a minimal example: [minimal-example.qmd](minimal-example.qmd).
 
 ## References
 
@@ -35,6 +37,10 @@ You can find usage examples here
 * <https://github.com/Data-Wise/unm-revealjs/>
 * <https://github.com/coatless-quarto/illinois-revealjs>
 * <https://github.com/cct-datascience/uaz-revealjs>
+
+## See also
+
+* <https://github.com/paytonej/teleprompt-revealjs>
 
 ## License
 
