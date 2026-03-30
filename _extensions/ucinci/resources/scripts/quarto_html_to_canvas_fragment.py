@@ -45,6 +45,7 @@ for output_file in os.getenv("QUARTO_PROJECT_OUTPUT_FILES").split("\n"):
             print(main_content)
         else:
             print("No content found in <main>")
+            main_content = ""
 
         # Extract main content
         #main_content = main_tag.decode_contents()

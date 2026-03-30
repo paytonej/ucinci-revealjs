@@ -73,3 +73,8 @@ See https://en.wikibooks.org/wiki/LaTeX/Fonts#Font_sizes
   box-sizing: border-box;
   line-height: 1.3;
 }
+
+/* Reserve bottom space on slides that include a pinned source citation */
+.reveal .slides section:has(.source-citation) {
+  padding-bottom: 3.5em;
+}
