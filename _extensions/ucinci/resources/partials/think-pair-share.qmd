@@ -55,7 +55,7 @@ print(f"<script>window.TPS_ROSTER = {json.dumps(_tps_names)};</script>")
   border-radius: 12px;
   background: var(--tps-bg);
   color: #fff;
-  font-size: .62em;
+  font-size: .82em;          /* readable from the back of the room */
   line-height: 1.25;
   border-left: 10px solid var(--tps-accent);
   transition: border-color .4s;
@@ -76,7 +76,7 @@ print(f"<script>window.TPS_ROSTER = {json.dumps(_tps_names)};</script>")
 .tps-clock {
   margin-left: auto;
   font-variant-numeric: tabular-nums;
-  font-size: 2.1em; font-weight: 700;
+  font-size: 1.7em; font-weight: 700;
   cursor: pointer; user-select: none;
 }
 .tps[data-phase="idle"] .tps-clock,
@@ -101,13 +101,13 @@ print(f"<script>window.TPS_ROSTER = {json.dumps(_tps_names)};</script>")
   border: 2px solid var(--tps-think); border-radius: 8px;
   padding: .3em .5em; text-align: center;
 }
-.tps-cards b { display: block; color: var(--tps-think); font-size: 1.1em; }
-.tps-cards small { color: #e0dfe3; }
+.tps-cards b { display: block; color: var(--tps-think); font-size: 1.05em; }
+.tps-cards small { display: block; color: #e0dfe3; font-size: .9em; line-height: 1.2; }
 
 .tps-names { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5em; }
 .tps-name {
   border: 2px dashed #a7a5aa; border-radius: 8px;
-  padding: .35em .5em; text-align: center; font-size: 1.3em; font-weight: 700;
+  padding: .3em .5em; text-align: center; font-size: 1.2em; font-weight: 700;
   min-height: 1.4em; color: #a7a5aa;
 }
 .tps-name.rolling { border-style: solid; color: #e0dfe3; }
