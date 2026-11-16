@@ -32,6 +32,7 @@ format: ucinci-revealjs
   - `.scroll-box`: a box that scrolls as you click forward.
   - `.collapse-out` fragments: steps that fade out and give up their space.
   - Slide classes `{.hide-logo}` and `{.nonincremental}`.
+  - `{.before-title}`: a slide that comes before the title slide, such as an instructor's setup checklist.
 - **Math and notes:**
   - Math renders with KaTeX, and `\ce{}` chemistry works inside it.
   - `::: {.instructor-notes}`: notes that appear only in an instructor PDF, never in the slides.

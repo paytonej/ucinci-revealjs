@@ -1,6 +1,24 @@
 <script>
 // UCinci Quarto Reveal.js Navigation & Logo Script
 
+// Slides marked {.before-title} (for example an instructor's setup slide) are
+// moved ahead of the title slide, so the deck opens on them. The title slide is
+// written by the template, so this can only be done once the page is built.
+// Reveal may already have read the slide order by the time this runs, so it is
+// told to re-read it (sync) once it is ready.
+(function () {
+  const title = document.getElementById('title-slide');
+  const early = document.querySelectorAll('.reveal .slides > section.before-title');
+  if (!title || !early.length || /print-pdf/.test(location.search)) return;
+  early.forEach(s => title.parentNode.insertBefore(s, title));
+  const resync = () => {
+    Reveal.sync();
+    // Open on the first slide unless the address names another one (a reload mid-lecture).
+    if (!location.hash || location.hash === '#/' || location.hash === '#/title-slide') Reveal.slide(0);
+  };
+  if (Reveal.isReady()) resync(); else Reveal.on('ready', resync);
+})();
+
 Reveal.on('slidechanged', event => {
   const slide = event.currentSlide;
 
@@ -127,11 +145,12 @@ Reveal.on('slidechanged', function(event) {
 });
 
 function updateTitleSlideLogo() {
-  const currentIndex = Reveal.getIndices().h; // horizontal slide index
   const logo = document.querySelector('.title-slide-logo');
   if (!logo) return;
 
-  if (currentIndex === 0) { // first slide is the title slide
+  // The title slide isn't always first (see {.before-title} above).
+  const slide = Reveal.getCurrentSlide();
+  if (slide && slide.id === 'title-slide') {
     logo.style.display = 'block';
   } else {
     logo.style.display = 'none';
