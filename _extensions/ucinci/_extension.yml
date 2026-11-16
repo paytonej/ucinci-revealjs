@@ -16,11 +16,7 @@ contributes:
       history: true
       embed-resources: true
       navigation-mode: linear
-      html-math-method:
-        method: mathjax
-        url: "https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"
-      format-resources:
-        - mathjax-config.js
+      html-math-method: katex
       include-in-header:
         - text: |
             <style>
@@ -31,12 +27,10 @@ contributes:
               display: var(--logo-display, block) !important;
                 }
               </style>
-      include-before-body:
-        - text: |
-            <script src="mathjax-config.js"></script>
       include-after-body:
         - resources/ucinci-nav.js
         - resources/coeos.html
+        - resources/scroll-box.html
       template-partials:
         - resources/revealjs-partials/title-slide.html
       # Title background controls:
@@ -44,5 +38,10 @@ contributes:
       title-slide-logo: "images/uc-mme-stacked-white.png"
       css:
         - resources/revealjs-supplement.css
-      resources: 
+        - resources/learning-objectives.css
+      filters:
+        - resources/scripts/mhchem-header.lua       # \ce{...} chemistry in math (KaTeX mhchem)
+        - resources/scripts/instructor-notes.lua    # ::: {.instructor-notes} never reaches the slides
+        - resources/scripts/slide-nonincremental.lua # ## Slide title {.nonincremental}
+      resources:
         - _extensions/paytonej/ucinci/images/*

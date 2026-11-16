@@ -1,0 +1,70 @@
+<!--
+Countdown timer badge (revealjs only), pinned to the top-right corner of the slide.
+
+Usage: include _extensions/paytonej/ucinci/resources/partials/countdown.qmd anywhere on the slide (the shortcode is not
+written out here because Quarto expands it inside comments). The duration defaults
+to 15 minutes; set another on the slide heading, e.g.  ## Group work {data-countdown="12"}
+
+Click the timer to start or pause, double-click to reset. In the last minute it
+pulses red; at 0:00 it turns solid red. Several timers can be used in one deck.
+-->
+
+::: {.content-visible when-format="revealjs"}
+
+```{=html}
+<style>
+.cd-timer {
+  position: absolute; top: -0.65em; right: 2.4em; z-index: 30;
+  font-weight: 700; font-size: 1.5em; line-height: 1.05; text-align: center;
+  color: #000000; background: #f3f3f3; border: 3px solid #333333; border-radius: 10px;
+  padding: 0.08em 0.45em 0.12em; cursor: pointer; user-select: none;
+}
+.cd-timer small { display: block; font-size: 0.32em; font-weight: 400; color: #333333; }
+.cd-timer.running { border-color: #e00122; }
+.cd-timer.urgent .cd-clock { color: #e00122; animation: cd-pulse 1s ease-in-out infinite; }
+.cd-timer.done { background: #e00122; border-color: #e00122; }
+.cd-timer.done .cd-clock, .cd-timer.done small { color: #ffffff; }
+@keyframes cd-pulse { 50% { opacity: 0.4; } }
+</style>
+<div class="cd-timer" title="Click to start or pause; double-click to reset">
+  <span class="cd-clock">15:00</span><small class="cd-hint">click to start</small>
+</div>
+<script>
+(function () {
+  function fmt(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function init(el) {
+    if (el.dataset.ready) return;
+    el.dataset.ready = '1';
+    var slide = el.closest('section');
+    var total = 60 * parseFloat((slide && slide.dataset.countdown) || '15');
+    var clock = el.querySelector('.cd-clock'), hint = el.querySelector('.cd-hint');
+    var remaining = total, timer = null, last = 0;
+    function draw() {
+      clock.textContent = fmt(remaining);
+      el.classList.toggle('urgent', remaining > 0 && remaining <= 60);
+      el.classList.toggle('done', remaining <= 0);
+    }
+    function stop() { clearInterval(timer); timer = null; el.classList.remove('running'); }
+    function tick() {
+      var now = Date.now();
+      remaining -= (now - last) / 1000; last = now;
+      if (remaining <= 0) { remaining = 0; stop(); hint.textContent = "time's up"; }
+      draw();
+    }
+    function start() { last = Date.now(); timer = setInterval(tick, 250); el.classList.add('running'); hint.textContent = 'click to pause'; }
+    el.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (remaining <= 0) return;
+      if (timer) { stop(); hint.textContent = 'paused'; } else { start(); }
+    });
+    el.addEventListener('dblclick', function (e) {
+      e.stopPropagation(); stop(); remaining = total; hint.textContent = 'click to start'; draw();
+    });
+    draw();
+  }
+  document.querySelectorAll('.cd-timer').forEach(init);
+})();
+</script>
+```
+
+:::

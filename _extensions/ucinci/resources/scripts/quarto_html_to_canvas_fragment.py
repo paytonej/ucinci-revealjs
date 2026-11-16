@@ -6,6 +6,18 @@ print("Converting rendered Quarto HTML to Canvas-compatible fragments (if it exi
 
 classes_to_remove = ['sidebar', 'margin-sidebar', 'quarto-alternate-formats']
 
+
+def unwrap_canvas_incompatible_markers(soup):
+    """Remove CSS-only wrappers while preserving their readable content."""
+    for tag in list(soup.select('.objectives-box')):
+        tag.unwrap()
+
+    for tag in list(soup.find_all(class_=True)):
+        classes = tag.get('class', [])
+        if any(cls == 'learning-objective-number' or cls.startswith('bloom-')
+               for cls in classes):
+            tag.decompose()
+
 for output_file in os.getenv("QUARTO_PROJECT_OUTPUT_FILES").split("\n"):
     print(f"Processing output file: {output_file}")
 
@@ -37,6 +49,8 @@ for output_file in os.getenv("QUARTO_PROJECT_OUTPUT_FILES").split("\n"):
         for cls in classes_to_remove:
             for tag in soup.select(f".{cls}"):
                 tag.decompose()  # completely remove it from the tree
+
+        unwrap_canvas_incompatible_markers(soup)
 
         main_tag = soup.find("main")
         if main_tag and main_tag.contents:

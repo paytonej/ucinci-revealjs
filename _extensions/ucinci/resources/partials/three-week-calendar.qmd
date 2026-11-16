@@ -1,0 +1,153 @@
+<!--
+Three-week due-date calendar (revealjs only), e.g. for an Announcements slide.
+
+Usage: include _extensions/paytonej/ucinci/resources/partials/three-week-calendar.qmd after the announcement bullets
+(the shortcode is not written out here because Quarto expands it inside comments).
+Needs the Jupyter engine with openpyxl. Re-render after changing the workbook.
+
+Settings (optional), in an earlier code cell:
+  cal3_workbook = "schedule.xlsx"   the workbook below (this is the default)
+  cal3_date = "2026-11-16"          the class day to center on; otherwise the
+                                    workbook's Schedule is searched, then today
+  cal3_groups = {...}               Assignment Group -> exam / project / homework /
+                                    anticipation (the color of the item)
+
+The workbook has three sheets; the first row of each holds the column names.
+  Schedule:    Date, Meeting Number, Meeting Filename Prefix
+               A row with a Meeting Number is a class day. The lecture is the row
+               whose prefix matches the first four characters of the .qmd name.
+  Assignments: Assignment Title, Assignment Group, Due Date, Due Time ("09:30:00")
+  Key Dates:   weekday, date, description. Rows starting "Last day to" are shown
+               as deadlines. Rows after a "Holidays, Breaks, and Conflicts" row
+               are days off.
+The window starts on the Monday of the lecture's week.
+-->
+
+::: {.content-visible when-format="revealjs"}
+
+```{=html}
+<style>
+.cal3 { font-size: 26px; line-height: 1.15; margin-top: .4em; }
+.cal3-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.cal3-head { text-align: center; font-weight: 700; color: #333333; }
+.cal3-day {
+  background: #ffffff; border: 2px solid #e0dfe3; border-radius: 6px;
+  padding: 5px 8px; min-height: 142px; box-sizing: border-box;
+}
+.cal3-day.off { background: #f3f3f3; }
+.cal3-day.current { border: 4px solid #000000; padding: 3px 6px; }
+.cal3-top { display: flex; justify-content: space-between; font-size: .85em; color: #333333; }
+.cal3-top b { color: #000000; }
+.cal3-off-label { font-size: .85em; font-style: italic; color: #333333; }
+.cal3-item { border-radius: 4px; padding: 2px 7px; margin-top: 4px; }
+.cal3-item small { display: block; font-size: .78em; }
+.cal3-exam { background: #e00122; color: #ffffff; font-weight: 700; }
+.cal3-project { background: #333333; color: #ffffff; }
+.cal3-homework { background: #f3f3f3; color: #000000; border-left: 8px solid #e00122; }
+.cal3-anticipation { background: #f3f3f3; color: #000000; border-left: 8px solid #d1b179; }
+.cal3-admin { background: #ffffff; color: #000000; border: 2px dashed #333333; }
+.cal3-next { font-size: .9em; margin-top: .4em; color: #333333; }
+</style>
+```
+
+```{python}
+#| output: asis
+import datetime as _dt
+import html as _html
+import os as _os
+from openpyxl import load_workbook as _load_workbook
+
+
+def _cal3_time(t):
+    return f"{t.hour % 12 or 12}:{t.minute:02d} {'am' if t.hour < 12 else 'pm'}"
+
+
+def _cal3_label(title):
+    title = title.split(" - ")[0].replace("Term Project ", "Project ")
+    return title.replace(" Problem Set", "").replace("Questions", "Qs")
+
+
+def _cal3_render():
+    wb = _load_workbook(globals().get("cal3_workbook", "schedule.xlsx"),
+                        data_only=True, read_only=True)
+
+    def as_records(sheet):
+        rows = [r for r in wb[sheet].iter_rows(values_only=True) if any(c is not None for c in r)]
+        return [dict(zip(rows[0], r)) for r in rows[1:]]
+
+    def as_date(value):
+        return value.date() if isinstance(value, _dt.datetime) else None
+
+    # Which lecture is this? Falls back to today for anything not on the schedule.
+    prefix = _os.environ.get("QUARTO_DOCUMENT_FILE", "")[:4]
+    schedule = as_records("Schedule")
+    lecture = next((as_date(r["Date"]) for r in schedule
+                    if r["Meeting Filename Prefix"] == prefix), None) or _dt.date.today()
+    if globals().get("cal3_date"):
+        lecture = _dt.date.fromisoformat(str(globals()["cal3_date"])[:10])
+    monday = lecture - _dt.timedelta(days=lecture.weekday())
+    window_end = monday + _dt.timedelta(days=20)
+
+    class_days = {as_date(r["Date"]) for r in schedule if r["Meeting Number"]}
+
+    # Key Dates has two stacked lists: term dates, then holidays and conflicts.
+    off_days, items, in_holidays = {}, {}, False
+    for weekday, day, description, *_ in wb["Key Dates"].iter_rows(values_only=True):
+        if weekday == "Holidays, Breaks, and Conflicts":
+            in_holidays = True
+        day = as_date(day)
+        if day is None or not description:
+            continue
+        if in_holidays:
+            off_days[day] = description.replace("Veteran's", "Veterans")
+        elif description.startswith("Last day to"):
+            items.setdefault(day, []).append((_dt.time(0), "admin", description, ""))
+
+    group_kind = globals().get("cal3_groups") or {
+        "Exams": "exam", "Term Project": "project",
+        "Homework Problem Sets": "homework",
+        "Exam Anticipation Questions": "anticipation"}
+    rows = [r for r in wb["Assignments"].iter_rows(values_only=True) if any(c is not None for c in r)]
+    upcoming = []
+    for r in (dict(zip(rows[0], row)) for row in rows[1:]):
+        day, kind = as_date(r["Due Date"]), group_kind.get(r["Assignment Group"])
+        if day is None or kind is None:
+            continue
+        label = _cal3_label(r["Assignment Title"])
+        # The workbook stores due times as "09:30:00" text; exams have none.
+        due = _dt.time.fromisoformat(r["Due Time"]) if r["Due Time"] else _dt.time(0)
+        when = "in class" if kind == "exam" else f"due {_cal3_time(due)}"
+        items.setdefault(day, []).append((due, kind, label, when))
+        if day > window_end:
+            upcoming.append((day, label))
+
+    out = ['<div class="cal3"><div class="cal3-grid">']
+    out += [f'<div class="cal3-head">{d}</div>' for d in ("Mon", "Tue", "Wed", "Thu", "Fri")]
+    for offset in (o for o in range(21) if o % 7 < 5):
+        day = monday + _dt.timedelta(days=offset)
+        classes = "cal3-day" + (" off" if day in off_days else "") + (" current" if day == lecture else "")
+        day_items = sorted(items.get(day, []))
+        is_exam = any(kind == "exam" for _, kind, _, _ in day_items)
+        tag = "class" if day in class_days and not is_exam else ""
+        out.append(f'<div class="{classes}"><div class="cal3-top">'
+                   f'<b>{day:%b} {day.day}</b><span>{tag}</span></div>')
+        if day in off_days:
+            out.append(f'<div class="cal3-off-label">{_html.escape(off_days[day])}</div>')
+        for _, kind, label, when in day_items:
+            note = f"<small>{when}</small>" if when else ""
+            out.append(f'<div class="cal3-item cal3-{kind}">{_html.escape(label)}{note}</div>')
+        out.append("</div>")
+    out.append("</div>")
+
+    if upcoming:
+        following = " · ".join(f"<b>{d:%b} {d.day}</b> {_html.escape(l)}" for d, l in sorted(upcoming)[:3])
+        out.append(f'<div class="cal3-next">After this: {following}</div>')
+    out.append("</div>")
+
+    print("```{=html}\n" + "\n".join(out) + "\n```")
+
+
+_cal3_render()
+```
+
+:::

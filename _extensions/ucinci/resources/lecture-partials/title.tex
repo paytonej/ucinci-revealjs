@@ -22,4 +22,10 @@ $if(subtitle)$
 $endif$
 $-- This supports Quarto's authors normalization
 \author{$for(authors)$$it.name.literal$$sep$ \and $endfor$}
+$-- date-string lets a document show literal text (e.g. "Fall 2026") instead of
+$-- a parsed date, since Quarto always coerces $date$ through its date parser.
+$if(date-string)$
+\date{$date-string$}
+$else$
 \date{$date$}
+$endif$

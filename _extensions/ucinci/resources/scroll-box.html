@@ -1,0 +1,139 @@
+<!--
+.scroll-box: a box that scrolls as you click forward (revealjs only).
+
+Add the class to any div, alone or with another box style:
+
+  ::: {.objectives-box .scroll-box}
+  ...
+  :::
+
+If the box runs past the bottom of its slide, it is capped at the space left
+on the slide and becomes scrollable:
+  * items revealed one per click (incremental list or other fragments): each
+    click scrolls the newly shown item into view;
+  * no fragments inside the box: hidden step fragments are added, and each
+    click scrolls the box down by most of its height.
+Stepping backward scrolls back. Print view (?print-pdf) is left alone.
+-->
+<style>
+.reveal .scroll-box { position: relative; }
+.reveal .scroll-box.is-scrolling {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--course-blue, #1F4E79) transparent;
+}
+.reveal .scroll-box .scroll-box-step {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  opacity: 0; pointer-events: none;
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+  if (window.__scrollBox) return;
+  window.__scrollBox = true;
+  if (/print-pdf/i.test(window.location.search)) return;
+
+  var BOTTOM_GAP = 70;   // slide px kept clear for the slide number and controls
+  var STEP = 0.8;        // fraction of the box height per click (boxes without fragments)
+  var PAD = 16;          // slide px of breathing room below a revealed item
+
+  function topWithin(el, ancestor) {
+    var y = 0;
+    while (el && el !== ancestor) { y += el.offsetTop; el = el.offsetParent; }
+    return y;
+  }
+
+  function ownFragments(box) {
+    return Array.prototype.filter.call(box.querySelectorAll('.fragment'), function (f) {
+      return !f.classList.contains('scroll-box-step');
+    });
+  }
+
+  // Cap the box at the room left on its slide; true if it overflows.
+  function fit(box) {
+    var slide = box.closest('section');
+    if (!slide) return false;
+    box.style.maxHeight = '';
+    box.classList.remove('is-scrolling');
+    var avail = Reveal.getComputedSlideSize().height - topWithin(box, slide) - BOTTOM_GAP;
+    if (avail > 100 && box.scrollHeight > avail + 1) {
+      box.style.maxHeight = avail + 'px';
+      box.classList.add('is-scrolling');
+      return true;
+    }
+    return false;
+  }
+
+  function scrollTo(box, top) {
+    top = Math.max(0, Math.min(top, box.scrollHeight - box.clientHeight));
+    box.scrollTo({ top: top, behavior: 'smooth' });
+  }
+
+  // Scroll so the last shown item (or step) is in view.
+  function follow(box) {
+    if (!box.classList.contains('is-scrolling')) return;
+    var steps = box.querySelectorAll('.scroll-box-step');
+    if (steps.length) {
+      var shown = box.querySelectorAll('.scroll-box-step.visible').length;
+      scrollTo(box, shown * box.clientHeight * STEP);
+      return;
+    }
+    var visible = ownFragments(box).filter(function (f) { return f.classList.contains('visible'); });
+    if (!visible.length) { scrollTo(box, 0); return; }
+    var last = visible[visible.length - 1];
+    var bottom = topWithin(last, box) + last.offsetHeight + PAD;
+    scrollTo(box, bottom - box.clientHeight);
+  }
+
+  // Boxes with nothing to reveal get invisible step fragments to click through.
+  function addSteps(box) {
+    if (ownFragments(box).length || box.querySelector('.scroll-box-step')) return false;
+    var n = Math.ceil((box.scrollHeight - box.clientHeight) / (box.clientHeight * STEP));
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement('span');
+      s.className = 'fragment scroll-box-step';
+      box.appendChild(s);
+    }
+    return n > 0;
+  }
+
+  function prepare(slide) {
+    if (!slide) return;
+    var added = false;
+    slide.querySelectorAll('.scroll-box').forEach(function (box) {
+      if (fit(box) && addSteps(box)) added = true;
+    });
+    if (added) Reveal.syncFragments();
+    slide.querySelectorAll('.scroll-box.is-scrolling').forEach(follow);
+  }
+
+  function onFragment(e) {
+    var boxes = [];
+    (e.fragments || (e.fragment ? [e.fragment] : [])).forEach(function (f) {
+      var box = f.closest && f.closest('.scroll-box');
+      if (box && boxes.indexOf(box) < 0) boxes.push(box);
+    });
+    boxes.forEach(follow);
+  }
+
+  function init() {
+    if (typeof Reveal === 'undefined' || !Reveal.isReady || !Reveal.isReady()) {
+      if (typeof Reveal !== 'undefined' && Reveal.on) { Reveal.on('ready', init); return; }
+      setTimeout(init, 60); return;
+    }
+    if (init.done) return; init.done = true;
+    Reveal.on('slidechanged', function (e) { prepare(e.currentSlide); });
+    Reveal.on('fragmentshown', onFragment);
+    Reveal.on('fragmenthidden', onFragment);
+    Reveal.on('resize', function () { prepare(Reveal.getCurrentSlide()); });
+    // KaTeX and fonts change heights after load; fit again once they settle.
+    prepare(Reveal.getCurrentSlide());
+    window.addEventListener('load', function () { prepare(Reveal.getCurrentSlide()); });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}());
+</script>

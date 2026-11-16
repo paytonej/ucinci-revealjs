@@ -143,4 +143,40 @@ Reveal.on('slidechanged', updateTitleSlideLogo);
 
 /* On initial load */
 document.addEventListener('DOMContentLoaded', updateTitleSlideLogo);
+
+// Animate .collapse-out fragments (see revealjs-supplement.css) so content
+// below them slides up/down instead of jumping. CSS can't transition
+// height to/from auto, so pin the start height inline, then release it.
+function collapseOutFragments(fragments) {
+  return fragments.filter(el => el.classList.contains('collapse-out'));
+}
+
+Reveal.on('fragmentshown', event => {
+  collapseOutFragments(event.fragments).forEach(el => {
+    // .visible (height: 0) may already be applied and flushed by the time
+    // this fires, so jump back to full height with height transitions
+    // off (keeping the opacity fade running), then release to 0.
+    el.style.transitionProperty = 'opacity, visibility';
+    el.style.height = el.scrollHeight + 'px';
+    el.offsetHeight; // force reflow so the transition has a start value
+    el.style.transitionProperty = '';
+    el.style.height = '';
+  });
+});
+
+Reveal.on('fragmenthidden', event => {
+  collapseOutFragments(event.fragments).forEach(el => {
+    el.style.overflow = 'hidden';
+    el.style.height = '0px';
+    const target = el.scrollHeight;
+    el.offsetHeight;
+    el.style.height = target + 'px';
+    el.addEventListener('transitionend', function done(e) {
+      if (e.propertyName !== 'height') return;
+      el.style.height = '';
+      el.style.overflow = '';
+      el.removeEventListener('transitionend', done);
+    });
+  });
+});
 </script>

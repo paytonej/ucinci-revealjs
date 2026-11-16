@@ -1,0 +1,130 @@
+.poll {
+  display: none;
+  position: absolute;
+  right:-160px;
+  bottom:-151px;
+  width: 820px;   /* was 10cm (~380px), too small on a 1920px slide */
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 6px;
+  outline: 0;
+  box-shadow: 0 3px 9px rgba(0,0,0,.5);
+  background-color: #fff;
+}
+
+.poll > h1 {
+  min-height: 16.43px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 42px;
+  line-height: 1.2;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: #222;
+}
+
+.poll > ul {
+  display: block;
+  padding: 18px 22px;
+  margin: 0;
+}
+
+.poll > ul > li {
+  display: inline-block;
+  font-size: 34px;
+  text-align: center;
+  color:#fff !important;
+  text-decoration: none !important;
+  padding:16px 28px;
+  margin: 5px 0;
+  line-height:1.15;
+  overflow: hidden;
+  position:relative;
+  width: -webkit-fill-available;
+  cursor: pointer;
+
+  box-shadow:0 1px 1px #ccc;
+  border-radius: 6px;
+
+  background-color: #aaa;
+  background-image:-webkit-linear-gradient(top, #aaa,  #aaa);
+  background-image:-moz-linear-gradient(top,  #aaa,  #aaa);
+  background-image:linear-gradient(top,  #aaa,  #aaa);
+}
+
+.poll > ul > li > .poll-percentage {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  z-index: 1;
+  transition: width 0.5s, height 0.5s;
+  width: 100%;
+}
+
+.poll > ul > li:nth-child(4n+1) > .poll-percentage {
+  background-color: #5cb85c;
+}
+.poll > ul > li:nth-child(4n+2) > .poll-percentage {
+  background-color: #d9534f;
+}
+.poll > ul > li:nth-child(4n+3) > .poll-percentage {
+  background-color: #f0ad4e;
+}
+.poll > ul > li:nth-child(4n+4) > .poll-percentage {
+  background-color: #428bca;
+}
+
+.poll > ul > li > .poll-answer-text {
+  z-index: 2;
+  position:relative;
+}
+
+.poll > h2 {
+  padding: 6px;
+  border-top: 1px solid #e5e5e5;
+  font-size:28px;
+  margin-bottom: 1px;
+  color: #555;
+}
+
+.poll > .poll-responses {
+  position: absolute;
+  top: 3px;
+  right: 12px;
+  font-size: 30px;
+  color: #222;
+}
+
+/* Countdown: a bar draining across the top edge of the box, and the seconds
+   left at the right end of the "Vote at ..." footer. Both turn red near 0. */
+.poll > .poll-timer-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 8px;
+  width: 0%;
+  border-radius: 6px 6px 0 0;
+  background-color: #428bca;
+  z-index: 3;
+}
+
+.poll > h2 > .poll-timer {
+  float: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  color: #428bca;
+}
+
+.poll.poll-timer-urgent > .poll-timer-bar { background-color: #d9534f; }
+.poll.poll-timer-urgent > h2 > .poll-timer { color: #d9534f; }
+
+/* Hidden step after each poll; reaching it closes the poll (see poll.js). */
+.poll > .poll-reveal {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}

@@ -1,0 +1,61 @@
+/* learning-objectives.css
+   Learning-objectives box, Bloom's-level badges, objective-number badges, and module
+   badges. objectives-style-tex.lua gives the same look in PDF and beamer output.
+
+   ::: {.objectives-box}
+   By the end of this session, you will be able to:
+
+   1. Calculate ... [Ap]{.bloom-Ap} · [#36]{.learning-objective-number}
+   :::
+
+   Colors can be overridden with --light-blue (box background) and --course-blue
+   (box rule) on :root. */
+
+/* Learning objectives box */
+.objectives-box {
+  background: var(--light-blue, #D6E4F0);
+  border-left: 4px solid var(--course-blue, #1F4E79);
+  border-radius: 4px;
+  padding: 0.8rem 1.1rem;
+  margin: 1rem 10%;
+  box-sizing: border-box;
+}
+.reveal .objectives-box { margin: 1rem 0; }
+.objectives-box ol { list-style: none; counter-reset: objectives-counter; margin: 0.4rem 0 0 0; padding-left: 0; }
+/* Hanging number via absolute positioning (not flex), so tight lists, whose items hold
+   bare text and badge spans rather than one <p>, wrap as ordinary text. */
+.objectives-box li { counter-increment: objectives-counter; list-style: none; position: relative; padding-left: 1.6em; margin-bottom: 0.6rem; }
+.objectives-box li::before { content: counter(objectives-counter) "."; position: absolute; left: 0; font-weight: 600; }
+.objectives-box li > p { margin: 0; }
+.objectives-box li:last-child { margin-bottom: 0; }
+
+/* Bloom's level badges: R(emember), U(nderstand), Ap(ply), An(alyze), E(valuate), C(reate) */
+.bloom-R, .bloom-U, .bloom-Ap, .bloom-An, .bloom-E, .bloom-C,
+.learning-objective-number,
+.module-M1, .module-M2, .module-M3, .module-M4, .module-M5 {
+  padding: 1px 7px; border-radius: 3px; font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+}
+.bloom-R  { background: #E6F1FB; color: #0C447C; }
+.bloom-U  { background: #EAF3DE; color: #27500A; }
+.bloom-Ap { background: #FAEEDA; color: #633806; }
+.bloom-An { background: #EEEDFE; color: #3C3489; }
+.bloom-E  { background: #FAECE7; color: #712B13; }
+.bloom-C  { background: #FBEAF0; color: #72243E; }
+
+/* Learning objective number badge */
+.learning-objective-number { background: #ECECEC; color: #444444; font-family: monospace; }
+
+/* Module badges */
+.module-M1 { background: #E3ECF5; color: #1F4E79; }
+.module-M2 { background: #E6F4E7; color: #2E7D32; }
+.module-M3 { background: #ECE7F8; color: #4527A0; }
+.module-M4 { background: #FCEBDF; color: #B84000; }
+.module-M5 { background: #FBE7F0; color: #880E4F; }
+
+/* On slides, badges scale with the slide text rather than the document root. */
+.reveal .bloom-R, .reveal .bloom-U, .reveal .bloom-Ap, .reveal .bloom-An,
+.reveal .bloom-E, .reveal .bloom-C, .reveal .learning-objective-number,
+.reveal .module-M1, .reveal .module-M2, .reveal .module-M3, .reveal .module-M4, .reveal .module-M5 {
+  padding: 0.08em 0.4em;
+  font-size: 0.72em;
+}

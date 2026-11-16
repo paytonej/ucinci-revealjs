@@ -20,11 +20,11 @@ logo:
 
 typography:
   fonts:
-    - family: Open Sans, Arial, sans-serif
+    - family: "Open Sans"
       source: google
-    - family: Jost, Open Sans, Arial, sans-serif
+    - family: "Jost"
       source: google
-    - family: Gentium Book Basic, Arial, sans-serif
+    - family: "Gentium Book Basic"
       source: google
   base: Open Sans
   headings: Jost

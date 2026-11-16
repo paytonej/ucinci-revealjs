@@ -24,11 +24,9 @@ for output_file in os.getenv("QUARTO_PROJECT_OUTPUT_FILES").split("\n"):
 
         writer.compress_identical_objects(remove_identicals=True, remove_orphans=True)
         
-        # 2. Compress the content streams of pages within the writer
-        # Note: This has to be done on the writer's pages, not the reader's pages.
+        # 2. Compress content streams without traversing page.images. The image
+        # API parses every content stream and can fail on valid tagged PDFs.
         for page in writer.pages:
-            for img in page.images:
-                img.replace(img.image, quality=90)
             page.compress_content_streams(level=9) # level 9 for highest compression
 
         with open(output_file, "wb") as f:

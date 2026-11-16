@@ -59,6 +59,14 @@ See https://en.wikibooks.org/wiki/LaTeX/Fonts#Font_sizes
   max-width: 80%;         /* keep it from stretching too wide */
 }
 
+/* .white-gradient and .black-and-white slides clear every div's background and color (ucinci.scss);
+   keep the bang box red with white text there. Its children inherit the white. */
+.reveal .slides section.white-gradient .bang-box,
+.reveal .slides section.black-and-white .bang-box {
+  background: #e00122 !important;
+  color: #ffffff !important;
+}
+
 /* Source citation pinned to the bottom of the slide */
 .reveal .slides section .source-citation {
   position: absolute;
@@ -77,6 +85,7 @@ See https://en.wikibooks.org/wiki/LaTeX/Fonts#Font_sizes
 /* Reserve bottom space on slides that include a pinned source citation */
 .reveal .slides section:has(.source-citation) {
   padding-bottom: 3.5em;
+  box-sizing: border-box;   /* keep the slide 1080 px tall, so the citation stays on it */
 }
 
 /* Keep captions bounded to image width instead of full slide width.
@@ -122,4 +131,52 @@ See https://en.wikibooks.org/wiki/LaTeX/Fonts#Font_sizes
   max-width: 100%;
   box-sizing: border-box;
   overflow-wrap: anywhere;
+}
+
+/* Two-column and three-column layouts */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5em;
+  align-items: center;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1em;
+  align-items: start;
+}
+
+/* Label classes for color-coding important terms */
+
+.label-teal  { color: var(--teal, #00797c);    font-weight: bold; }
+.label-amber { color: var(--amber, #b86e00);   font-weight: bold; }
+.label-red   { color: var(--red-hot, var(--uc-red, #e00122)); font-weight: bold; }
+
+/* Diagram styling */
+img.diagram {
+  border: 2px solid var(--steel-light, var(--steger-silver, #a7a5aa));
+  border-radius: 6px;
+  width: 100%;
+}
+
+.center-text { text-align: center; }
+
+/* Fragments that should fully collapse (reclaim their vertical space) once
+   they fade out, instead of reveal.js's default fade-out behavior, which
+   keeps a same-size invisible placeholder via visibility:hidden. Combine
+   with .fragment.fade-out so later fragments can shift up into the gap —
+   useful for a "sliding window" of steps in a derivation. Usage:
+   ::: {.fragment .fade-out .collapse-out data-fragment-index="N"}
+   The height change is animated by the collapse-out handler in
+   ucinci-nav.js, so content below slides up smoothly. flow-root keeps
+   child margins inside the box so the measured height matches layout. */
+.reveal .slides section .fragment.fade-out.collapse-out {
+  display: flow-root;
+  transition: opacity 0.4s ease, visibility 0.4s ease, height 0.6s ease;
+}
+.reveal .slides section .fragment.fade-out.collapse-out.visible {
+  height: 0;
+  overflow: hidden;
 }

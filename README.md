@@ -23,6 +23,22 @@ To use the ucinci-revealjs theme in your Quarto presentation, specify it as a fo
 format: ucinci-revealjs
 ```
 
+## What's included
+
+- **Slide backgrounds:** `.official-uc-red-gradient`, `.beyond-black-gradient`, `.white-gradient`, `.uc-red-flat`, `.uc-black-flat`, `.black-and-white`, and the CEAS background images.
+- **Content classes:** `.bang-box`, `.two-col` / `.three-col`, `.label-teal` / `.label-amber` / `.label-red`, `.center-text`, `{.diagram}` images, `.caption-match-image`, `.source-citation`, and `.font-tiny` … `.font-HUGE`.
+- **Learning objectives:** `.objectives-box`, Bloom's-level badges (`.bloom-R` … `.bloom-C`), `.learning-objective-number`, and `.module-M1` … `.module-M5`.
+- **Behavior:**
+  - `.scroll-box`: a box that scrolls as you click forward.
+  - `.collapse-out` fragments: steps that fade out and give up their space.
+  - Slide classes `{.hide-logo}` and `{.nonincremental}`.
+- **Math and notes:**
+  - Math renders with KaTeX, and `\ce{}` chemistry works inside it.
+  - `::: {.instructor-notes}`: notes that appear only in an instructor PDF, never in the slides.
+- **Live polls:** `::: {.poll}` blocks that students answer on their phones, using the `poll` plugin and `poll.lua`. They need the small PHP server in [poll-server/](poll-server/README.md). The secret key stays in your project's `_secrets.json` and is added only when you render.
+- **Classroom-activity partials** in `resources/partials/`: a countdown timer, a think–pair–share timer that draws names, team draws for 2–6 teams, and a three-week due-date calendar. Add one with `{{< include _extensions/paytonej/ucinci/resources/partials/countdown.qmd >}}`. Most of them read a class roster or schedule spreadsheet with Python.
+- **Course-project helpers** in `resources/scripts/`: PDF accessibility and font repair, Canvas page export, PDF image sizing, and more.
+
 ## Examples
 
 

@@ -44,13 +44,15 @@ logo:
 
 typography:
   fonts:
-    - family: Open Sans, Arial, sans-serif;
+    - family: "Open Sans"
       source: google
-    - family: Jost, Open Sans, Arial, sans-serif;
+    - family: "Jost"
       source: google
-    - family: Gentium Book Basic, Alegreya, Literata, EBGaramond, Times New Roman, serif;
+    - family: "Gentium Book Basic"
       source: google
-    - family: Fira Mono, Inconsolata, Roboto Mono, Courier New, monospace;
+    - family: "Inconsolata"
+      source: google
+    - family: "Fira Mono"
       source: google
   base: 
     family: "Open Sans"

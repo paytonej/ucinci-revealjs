@@ -18,6 +18,7 @@ author:
         city: New York
         state: NY 
 format: ucinci-revealjs
+jupyter: python3   # the classroom-activity partials run Python (pandas, openpyxl)
 ---
 
 ## This package implements the University of Cincinnati color scheme for Quarto revealjs presentations
@@ -124,7 +125,7 @@ The color names are identical to those defined in the UC color palette. I don't 
 
 ## Add a source citation to the bottom of the slide
 
-When you have a source that you want to cite on a slide, you can add the `.source-citation` class to a div to place it in the bottom right of the slide. For example, `[This is a source citation]{.source-citation}`
+When you have a source that you want to cite on a slide, you can add the `.source-citation` class to a div to place it in the bottom left of the slide. For example, `[This is a source citation]{.source-citation}`
 
 or
 
@@ -136,8 +137,10 @@ This is a source citation.
 
 will place "This is a source citation" in tiny gray font at the bottom of the slide. This way we can give credit where credit is due without distracting from the main content of the slide. The styling of this element can be modified by changing the `.source-citation` class in `revealjs-supplement.css`.
 
+For example: people learn more from words and pictures together than from words alone (the *multimedia principle*). The source for that claim is at the bottom left of this slide.
+
 ::: {.source-citation}
-This is a source citation. Isn't that useful?
+R. E. Mayer, *Multimedia Learning*, 2nd ed. Cambridge, U.K.: Cambridge University Press, 2009.
 :::
 
 ## Make figure captions not extend beyond the width of the image
@@ -220,6 +223,307 @@ The font size of each content div can be set using LaTeX font size class names:
 :::
 :::
 
+# Content classes
+
+## The bang box
+
+Use `.bang-box` for the one sentence on a slide that students must not miss. It is UC red with white bold text, centered, and stays red on `.white-gradient` and `.black-and-white` slides.
+
+```{markdown}
+::: {.bang-box}
+Equilibrium is the minimum of the Gibbs energy, not of the enthalpy.
+:::
+```
+
+::: {.bang-box}
+Equilibrium is the minimum of the Gibbs energy, not of the enthalpy.
+:::
+
+## Two- and three-column grids {.nonincremental}
+
+`.two-col` and `.three-col` lay out their children in equal columns (CSS grid), a lighter-weight alternative to Quarto's `::: {.columns}`.
+
+```{markdown}
+::: {.three-col}
+**Heat** flows from hot to cold.
+
+**Work** moves a boundary.
+
+**Mass** carries energy across.
+:::
+```
+
+::: {.three-col}
+**Heat** flows from hot to cold.
+
+**Work** moves a boundary.
+
+**Mass** carries energy across.
+:::
+
+## Colored labels, centered text, and framed diagrams {.nonincremental}
+
+::: {.two-col}
+::: {}
+- [`.label-teal`]{.label-teal}, [`.label-amber`]{.label-amber}, and [`.label-red`]{.label-red} color-code terms, e.g. [reactants]{.label-teal} → [products]{.label-red}.
+- `.center-text` centers a block; `.center-column-text` centers the text in a column.
+- `{.diagram}` on an image gives it a thin rounded frame and fills its column.
+
+```{markdown}
+[products]{.label-red}
+![](figure.png){.diagram}
+```
+:::
+
+::: {.center-text}
+![](_extensions/ucinci/images/electronics.jpg){.diagram fig-alt="The CEAS electronics background image, shown here in a framed diagram style."}
+
+This caption is centered with `.center-text`.
+:::
+:::
+
+## Font sizes, logos, and incremental lists {.hide-logo .nonincremental}
+
+- `## Slide title {.hide-logo}` hides the UC logo on that slide (as on this one), for a full-bleed figure.
+- Lists appear one item at a time by default. `## Slide title {.nonincremental}` shows every list on that slide at once (as here). A `::: {.nonincremental}` div does the same for one list.
+- `.font-tiny` … `.font-HUGE` set a LaTeX-style size on any span or div (see the font size slide).
+
+```{markdown}
+## A figure that needs the whole slide {.hide-logo .nonincremental}
+```
+
+# Learning objectives
+
+## The objectives box
+
+`.objectives-box` frames a numbered list of objectives. `.bloom-R`, `.bloom-U`, `.bloom-Ap`, `.bloom-An`, `.bloom-E`, and `.bloom-C` tag the Bloom's level; `.learning-objective-number` and `.module-M1` … `.module-M5` add badges. PDF and beamer output get the same look from `objectives-style-tex.lua`.
+
+```{markdown}
+::: {.objectives-box}
+By the end of this session, you will be able to:
+
+1. Calculate $\Delta G^\circ$ for a reaction from tabulated data. [Ap]{.bloom-Ap} · [#36]{.learning-objective-number}
+2. Describe what an Ellingham diagram represents. [U]{.bloom-U} · [#75]{.learning-objective-number} [M5]{.module-M5}
+:::
+```
+
+::: {.objectives-box}
+By the end of this session, you will be able to:
+
+1. Calculate $\Delta G^\circ$ for a reaction from tabulated data. [Ap]{.bloom-Ap} · [#36]{.learning-objective-number}
+2. Describe what an Ellingham diagram represents. [U]{.bloom-U} · [#75]{.learning-objective-number} [M5]{.module-M5}
+:::
+
+## A long objectives box that scrolls
+
+Add `.scroll-box` to any box that may run off the slide: `::: {.objectives-box .scroll-box}`. Each click reveals the next objective and scrolls it into view; stepping back scrolls back.
+
+::: {.objectives-box .scroll-box}
+By the end of this session, you will be able to:
+
+1. Remember the definitions of a system, its surroundings, and its boundary, and classify a system as open, closed, or isolated. [R]{.bloom-R} · [#1]{.learning-objective-number}
+2. Explain the difference between a state function and a path function, giving two examples of each from everyday experience. [U]{.bloom-U} · [#2]{.learning-objective-number}
+3. Apply the first law to calculate the heat and work for a reversible isothermal expansion of an ideal gas. [Ap]{.bloom-Ap} · [#3]{.learning-objective-number}
+4. Analyze a heat-capacity measurement to separate the electronic and lattice contributions at low temperature. [An]{.bloom-An} · [#4]{.learning-objective-number}
+5. Evaluate whether a proposed process violates the second law, using the entropy change of the universe. [E]{.bloom-E} · [#5]{.learning-objective-number}
+6. Create a Gibbs energy–composition diagram for a regular solution and use it to construct a miscibility gap. [C]{.bloom-C} · [#6]{.learning-objective-number}
+7. Apply the Gibbs–Helmholtz relation to find how an equilibrium constant changes with temperature. [Ap]{.bloom-Ap} · [#7]{.learning-objective-number}
+8. Analyze an Ellingham diagram to predict which of two metals reduces the other's oxide at a given temperature. [An]{.bloom-An} · [#8]{.learning-objective-number}
+:::
+
+## A scroll box for any content {.nonincremental}
+
+`.scroll-box` works on any div. When there is nothing inside to reveal, each click scrolls the box down by most of its height.
+
+::: {.scroll-box style="border: 2px solid var(--steger-silver); border-radius: 8px; padding: 0 0.6em;"}
+{{< lipsum 1-4 >}}
+:::
+
+# Fragments
+
+## Collapsing fragments for a sliding derivation {.nonincremental}
+
+reveal.js's `.fade-out` leaves an invisible, same-size gap. Add `.collapse-out` so the step also gives up its space, and the steps below slide up smoothly.
+
+```{markdown}
+::: {.fragment .fade-out .collapse-out data-fragment-index="1"}
+$G = H - TS$
+:::
+```
+
+::: {.fragment .fade-out .collapse-out data-fragment-index="1"}
+**Step 1:** $G = H - TS$
+:::
+
+::: {.fragment .fade-out .collapse-out data-fragment-index="2"}
+**Step 2:** $dG = dH - T\,dS - S\,dT$
+:::
+
+**Step 3:** $dG = V\,dP - S\,dT$ (this step stays)
+
+::: {.fragment data-fragment-index="2"}
+**Step 4:** at constant $T$ and $P$, $dG = 0$ at equilibrium
+:::
+
+# Math and notes
+
+## Chemistry with `\ce{}` {.nonincremental}
+
+Math is rendered with KaTeX. Chemical formulas and reactions can be written with mhchem's `\ce{}` inside math; the format loads KaTeX's mhchem extension only when a document uses it (and the `mhchem` LaTeX package for PDF output).
+
+```{markdown}
+$\ce{2Fe + O2 -> 2FeO}$, $\ce{Fe2O3(s) + 3CO(g) -> 2Fe(l) + 3CO2(g)}$,
+$\ce{H2O <=> H+ + OH-}$, $\ce{^{235}_{92}U}$
+```
+
+$\ce{2Fe + O2 -> 2FeO}$, $\quad\ce{Fe2O3(s) + 3CO(g) -> 2Fe(l) + 3CO2(g)}$
+
+$\ce{H2O <=> H+ + OH-}$, $\quad\ce{^{235}_{92}U}$
+
+## Speaker notes and instructor notes {.smaller}
+
+- `::: {.notes}` are reveal.js speaker notes: press **S** to open the speaker view. They also print in PDF and handout output.
+- `::: {.instructor-notes}` never reach the slides, not even the speaker notes (anyone with a copy of the HTML can press S). They appear only in a PDF whose format sets `instructor-notes: true`, as a boxed "Instructor notes" callout.
+
+```{markdown}
+::: {.notes}
+Ask who has seen a blast furnace. (Everyone can see this.)
+:::
+
+::: {.instructor-notes}
+The answer key is on the back of the handout. (Instructor printout only.)
+:::
+```
+
+```yaml
+format:
+  ucinci-revealjs: default
+  pdf:
+    instructor-notes: true      # the instructor printout
+filters:                        # needed for formats other than ucinci-revealjs
+  - _extensions/paytonej/ucinci/resources/scripts/instructor-notes.lua
+```
+
+::: {.notes}
+This slide's speaker note: everyone with the HTML can read it.
+:::
+
+::: {.instructor-notes}
+You will not find this text anywhere in the rendered slides.
+:::
+
+## PDF, handout, and Canvas helpers {.smaller}
+
+The extension also ships filters and post-render scripts for the other outputs of a course project. Add them under `filters:` or `post-render:` in `_quarto.yml`:
+
+| File (in `resources/scripts/`) | What it does |
+|---|---|
+| `objectives-style-tex.lua` | Objectives box and badges in PDF and beamer |
+| `pdf-image-width.lua` | `{width="850px" pdf-width="60%"}`: a separate image size for PDF |
+| `latex-image-alt.lua` | Passes `fig-alt` into tagged PDFs for accessibility |
+| `fix_pdf_fonts.py` | Repairs LuaLaTeX font subsets that Acrobat rejects |
+| `compress_pdf.py` | Compresses rendered PDFs |
+| `quarto_html_to_canvas_fragment.py` | Turns HTML output into a Canvas page body |
+| `sync_to_onedrive.py` | Copies rendered files to the folder named in `_secrets.json` |
+
+The PDF title partial also accepts `date-string: "Fall 2026"` to print literal text instead of a parsed date.
+
+## Live polls {.smaller .nonincremental}
+
+:::: {.two-col}
+::: {}
+Students vote on their phones; the slide shows a countdown, then the results. Mark correct answers with `[x]`.
+
+````markdown
+::: {.poll time=45 position="bottom-left"}
+Which particle melts at the lower temperature?
+
+- [x] The 5 nm particle
+- [ ] The 50 nm particle
+:::
+````
+
+In PDFs, handouts, and HTML pages the same block becomes a lettered question with no answer marked.
+:::
+
+::: {}
+Polls need the small PHP server in [`poll-server/`](https://github.com/paytonej/ucinci-revealjs/tree/main/poll-server), plus:
+
+```yaml
+revealjs-plugins: [poll]
+filters:
+  - _extensions/paytonej/ucinci/resources/scripts/poll.lua
+poll-server: https://your.server.edu/~you/poll
+```
+
+The secret key goes in `_secrets.json` (`"poll_key"`), which stays out of git. Rendering writes it into decks that contain a poll, and nowhere else.
+:::
+::::
+
+# Classroom activities
+
+## Activity partials {.smaller .nonincremental}
+
+Drop-in slide pieces for class activities, added with Quarto's `include` shortcode. After `quarto add`, they are in `_extensions/paytonej/ucinci/resources/partials/`:
+
+| Partial | What it does | Data |
+|---|---|---|
+| `countdown.qmd` | Click-to-start timer in the slide's top-right corner | Minutes from `{data-countdown="12"}` on the slide (default 15) |
+| `think-pair-share.qmd` | Think (1:15) → pair (1:45) → share timer, then draws three names | Roster |
+| `team-draw-2.qmd` … `team-draw-6.qmd` | A full slide that deals the roster into 2–6 random teams | Roster |
+| `three-week-calendar.qmd` | Due dates, class days, and breaks for three weeks | Schedule workbook |
+
+- **Roster:** `Roster.xlsx` (or a `.csv`) with a `First Name` column, or set `roster_file = "..."` in an earlier code cell. With no roster, sample names are used, as in this demo. Keep the real roster out of public repositories.
+- **Schedule:** `schedule.xlsx`, or set `cal3_workbook`. The comments at the top of the partial describe its three sheets ([an example](https://github.com/paytonej/ucinci-revealjs/blob/main/demo-schedule.xlsx)).
+- These partials run Python, so the document needs `jupyter: python3` and pandas/openpyxl.
+
+## Countdown timer {data-countdown="5"}
+
+{{< include _extensions/ucinci/resources/partials/countdown.qmd >}}
+
+```markdown
+## Countdown timer {data-countdown="5"}
+
+{{{< include _extensions/paytonej/ucinci/resources/partials/countdown.qmd >}}}
+```
+
+- Click the timer to start or pause it; double-click to reset.
+- In the last minute it pulses red; at 0:00 it turns solid red.
+
+## Think–pair–share {.smaller}
+
+Why does a pot of water boil faster with the lid on?
+
+{{< include _extensions/ucinci/resources/partials/think-pair-share.qmd >}}
+
+::: {.notes}
+Put the question on the slide and the include on the line below it. Advance once to start the think and pair timers (the phase changes chime), then once per name drawn. Click the clock to pause.
+:::
+
+## Three-week calendar {.nonincremental}
+
+```{python}
+#| include: false
+cal3_workbook = "demo-schedule.xlsx"   # default: schedule.xlsx
+cal3_date = "2026-11-18"                # default: matched from the Schedule sheet, else today
+```
+
+- Exam 2 is Friday in class.
+
+{{< include _extensions/ucinci/resources/partials/three-week-calendar.qmd >}}
+
+## Team draw {.nonincremental}
+
+The next slide is `team-draw-4.qmd`. Advance once on it to deal the class into four teams; back up to clear them.
+
+```markdown
+{{{< include _extensions/paytonej/ucinci/resources/partials/team-draw-4.qmd >}}}
+```
+
+The partial makes its own slide, so put it between two slides. Use one team draw per deck.
+
+{{< include _extensions/ucinci/resources/partials/team-draw-4.qmd >}}
+
 # Extended capabilities
 
 ## The UC style provides additional capabilities for displaying content
@@ -236,17 +540,17 @@ You should follow Dr. Canouil on GitHub <https://github.com/mcanouil> and/or boo
 
 {{< lipsum 1-1 >}}
 
-### Placeholder
+### Image
 
-{{< placeholder 600 400 >}}
+![](_extensions/ucinci/images/baldwin.jpg){width=600 fig-alt="Baldwin Hall at the University of Cincinnati, the CEAS title-slide photograph."}
 
 ### Lipsum 2
 
 {{< lipsum 2-2 >}}
 
-### Placeholder 2
+### Image 2
 
-{{< placeholder 600 400 >}}
+![](_extensions/ucinci/images/electronics.jpg){width=600 fig-alt="The CEAS electronics background image."}
 
 :::
 

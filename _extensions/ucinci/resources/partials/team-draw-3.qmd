@@ -1,0 +1,394 @@
+<!--
+The Great Team Draw (revealjs only): a full slide that splits the class roster into
+3 random teams, name by name, when you advance.
+
+Usage: include _extensions/paytonej/ucinci/resources/partials/team-draw-3.qmd between two slides; it makes its own slide
+(the shortcode is not written out here because Quarto expands it inside comments).
+team-draw-2 ... team-draw-6 differ only in the number of teams. Use one per deck.
+Needs the Jupyter engine with pandas (and openpyxl for .xlsx).
+-->
+
+## {background-color="#000000" background-gradient="linear-gradient(to bottom, #404040, #000000)"}
+
+```{python}
+#| output: asis
+import pandas as pd
+import json
+
+# Roster: a spreadsheet or CSV with a "First Name" column. Set roster_file in an
+# earlier code cell to use another file; without one, sample names are drawn.
+try:
+    _rf = globals().get("roster_file", "Roster.xlsx")
+    df = pd.read_csv(_rf) if str(_rf).lower().endswith(".csv") else pd.read_excel(_rf)
+    col = "First Name" if "First Name" in df.columns else df.columns[0]
+    names = df[col].dropna().astype(str).str.strip().tolist()
+    names = [n for n in names if n]
+except Exception:
+    # Fallback if there is no roster file
+    names = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank",
+             "Grace", "Henry", "Isabel", "Jack", "Kate", "Liam"]
+
+print(f'<script>const PARTICIPANTS = {json.dumps(names)}; const NUM_TEAMS = 3;</script>')
+```
+
+```{=html}
+<style>
+/* UC brand styling: Jost headings, Open Sans text, white text on black, UC colors
+   (palette from ucinci-brand.yaml) for the teams. */
+
+/* ── Layout ─────────────────────────────────────────────── */
+.draw-app {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 22px 8px;
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+/* ── Title bar ───────────────────────────────────────────── */
+.draw-title-bar {
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+.draw-main-title {
+  font-family: "Jost", "Open Sans", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.8em;
+  line-height: 1.1;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+.draw-main-title::after {               /* UC red rule under the title */
+  content: "";
+  display: block;
+  width: 3.2em;
+  height: 6px;
+  margin: .2em auto 0;
+  border-radius: 3px;
+  background: #e00122;
+}
+.draw-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: .75em;
+  color: #e0dfe3;                       /* Main Street Mist */
+  margin: 8px 0 0;
+  font-weight: 400;
+  letter-spacing: .04em;
+}
+.draw-subtitle.done #status-text {      /* white on UC red */
+  font-family: "Jost", "Open Sans", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: #ffffff;
+  background: #e00122;
+  border-radius: 6px;
+  padding: .1em .9em;
+}
+
+/* ── Team grid ───────────────────────────────────────────── */
+.draw-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-content: center;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Team panels ─────────────────────────────────────────── */
+.team-panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  border: 2px solid;
+  padding: 0 0 8px;
+  background: rgba(255,255,255,.05);
+  overflow: hidden;
+  max-height: 100%;
+}
+
+.team-heading {                         /* solid header in the team's UC color */
+  font-family: "Jost", "Open Sans", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.05em;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 6px;
+  padding: 6px 12px;
+  flex-shrink: 0;
+}
+
+.name-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.2) transparent;
+}
+
+.name-card {
+  padding: 5px 11px;
+  margin: 3px 0;
+  border-radius: 6px;
+  font-size: .85em;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: #ffffff;
+  background: rgba(255,255,255,.08);
+  border-left: 5px solid;
+  opacity: 0;
+  animation: popIn .5s cubic-bezier(.175,.885,.32,1.275) forwards;
+}
+
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(.4) translateY(16px); }
+  65%  { opacity: 1; transform: scale(1.07) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+/* ── Spinner ─────────────────────────────────────────────── */
+.spinner-ring {
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255,255,255,.15);
+  border-top-color:   #e00122;
+  border-right-color: #ffffff;
+  border-radius: 50%;
+  display: none;
+  animation: spin .65s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Confetti ────────────────────────────────────────────── */
+.confetti-bit {
+  position: fixed;
+  top: -14px;
+  z-index: 9999;
+  pointer-events: none;
+  animation: cfall linear forwards;
+}
+@keyframes cfall {
+  0%   { opacity: 1; transform: translateY(0)     rotate(0deg); }
+  100% { opacity: 0; transform: translateY(105vh) rotate(800deg); }
+}
+
+/* ── Hide the invisible fragment trigger ─────────────────── */
+#draw-frag {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden; opacity: 0;
+  pointer-events: none;
+}
+</style>
+
+<!-- ═══════════════════════════════════════════ MARKUP ═══ -->
+<div class="draw-app">
+
+  <div class="draw-title-bar">
+    <div class="draw-main-title">The Great Team Draw</div>
+    <p class="draw-subtitle" id="draw-subtitle">
+      <span class="spinner-ring" id="spinner"></span>
+      <span id="status-text">Loading…</span>
+    </p>
+  </div>
+
+  <div class="draw-body" id="draw-body"></div>
+</div>
+
+<!-- Invisible RevealJS fragment — advance button triggers the draw -->
+<span class="fragment" id="draw-frag"></span>
+
+<!-- ════════════════════════════════════════════ SCRIPT ═══ -->
+<script>
+(function () {
+  'use strict';
+
+  // UC colors for the teams (ucinci-brand.yaml), and the text color allowed on each:
+  // UC red, Gettler gold, white, Steger silver, Calhoun maroon, Tangeman tan,
+  // UC dark red, Main Street Mist.
+  var PALETTE = ['#e00122','#d1b179','#ffffff','#a7a5aa','#890519','#eadbc1','#b8011c','#e0dfe3'];
+  var TEXT_ON = ['#ffffff','#000000','#000000','#000000','#ffffff','#000000','#ffffff','#000000'];
+  var drawn = false;
+
+  /* ── Team formation: exactly NUM_TEAMS teams, sizes differ by at most 1 ── */
+  function buildTeams(names, numTeams) {
+    var shuffled = names.slice();
+    shuffled.sort(function () { return Math.random() - 0.5; });
+    var n = shuffled.length;
+    numTeams = Math.max(1, Math.min(numTeams, n));
+    var base = Math.floor(n / numTeams);
+    var remainder = n % numTeams;
+    var teams = [];
+    var idx = 0;
+    for (var i = 0; i < numTeams; i++) {
+      var size = base + (i < remainder ? 1 : 0);
+      teams.push(shuffled.slice(idx, idx + size));
+      idx += size;
+    }
+    return teams;
+  }
+
+  /* ── Bootstrap ─────────────────────────────────────────── */
+  function init() {
+    if (typeof Reveal === 'undefined') { setTimeout(init, 60); return; }
+
+    var status = document.getElementById('status-text');
+    if (status && typeof PARTICIPANTS !== 'undefined') {
+      status.textContent =
+        PARTICIPANTS.length + ' participants — press → to draw ' + NUM_TEAMS + ' teams';
+    }
+
+    Reveal.on('fragmentshown', function (e) {
+      if (e.fragment && e.fragment.id === 'draw-frag' && !drawn) {
+        drawn = true;
+        startDraw();
+      }
+    });
+
+    Reveal.on('fragmenthidden', function (e) {
+      if (e.fragment && e.fragment.id === 'draw-frag') {
+        drawn = false;
+        resetDraw();
+      }
+    });
+  }
+
+  /* ── Build (empty) team panels ───────────────────────────── */
+  function renderPanels(numTeams) {
+    var body = document.getElementById('draw-body');
+    body.innerHTML = '';
+    for (var i = 0; i < numTeams; i++) {
+      var color = PALETTE[i % PALETTE.length];
+
+      var panel = document.createElement('div');
+      panel.className = 'team-panel';
+      panel.style.borderColor = color;
+
+      var heading = document.createElement('div');
+      heading.className = 'team-heading';
+      heading.textContent = 'TEAM ' + (i + 1);
+      heading.style.background = color;
+      heading.style.color = TEXT_ON[i % TEXT_ON.length];
+      panel.appendChild(heading);
+
+      var list = document.createElement('div');
+      list.className = 'name-list';
+      list.id = 'team' + i + '-list';
+      panel.appendChild(list);
+
+      body.appendChild(panel);
+    }
+  }
+
+  /* ── Main draw sequence ─────────────────────────────────── */
+  function startDraw() {
+    var status  = document.getElementById('status-text');
+    var spinner = document.getElementById('spinner');
+    spinner.style.display = 'inline-block';
+    status.textContent = 'SHUFFLING…';
+
+    var names = (typeof PARTICIPANTS !== 'undefined') ? PARTICIPANTS : [];
+    var count = (typeof NUM_TEAMS !== 'undefined') ? NUM_TEAMS : 3;
+    var teams = buildTeams(names, count);
+    renderPanels(teams.length);
+
+    var maxSize = teams.reduce(function (m, t) { return Math.max(m, t.length); }, 0);
+    var order = [];
+    for (var r = 0; r < maxSize; r++) {
+      for (var j = 0; j < teams.length; j++) {
+        if (r < teams[j].length) order.push({ team: j, name: teams[j][r] });
+      }
+    }
+
+    var GAP   = 260;   // ms between successive name reveals
+    var START = 1200;  // ms of "shuffling" before first name
+
+    order.forEach(function (item, idx) {
+      setTimeout(function () {
+        addCard(item.team, item.name, PALETTE[item.team % PALETTE.length]);
+      }, START + idx * GAP);
+    });
+
+    var finishAt = START + order.length * GAP + 350;
+    setTimeout(function () {
+      spinner.style.display = 'none';
+      var sub = document.getElementById('draw-subtitle');
+      sub.classList.add('done');
+      status.textContent = 'Teams set!';
+      fireConfetti();
+    }, finishAt);
+  }
+
+  /* ── Add one name card to a team panel ───────────────────── */
+  function addCard(teamIdx, name, color) {
+    var list = document.getElementById('team' + teamIdx + '-list');
+    if (!list) return;
+    var card = document.createElement('div');
+    card.className = 'name-card';
+    card.style.borderLeftColor = color;
+    card.textContent = name;
+    list.appendChild(card);
+    list.scrollTop = list.scrollHeight;
+  }
+
+  /* ── Reset for when user navigates back ─────────────────── */
+  function resetDraw() {
+    document.getElementById('draw-body').innerHTML = '';
+    document.getElementById('spinner').style.display = 'none';
+    var sub = document.getElementById('draw-subtitle');
+    sub.classList.remove('done');
+    var status = document.getElementById('status-text');
+    if (typeof PARTICIPANTS !== 'undefined') {
+      status.textContent =
+        PARTICIPANTS.length + ' participants — press → to draw ' + NUM_TEAMS + ' teams';
+    }
+  }
+
+  /* ── Confetti burst ─────────────────────────────────────── */
+  function fireConfetti() {
+    var palette = ['#e00122','#ffffff','#d1b179','#a7a5aa','#eadbc1','#b8011c'];   // UC colors
+    for (var i = 0; i < 110; i++) {
+      (function (i) {
+        setTimeout(function () {
+          var el = document.createElement('div');
+          el.className = 'confetti-bit';
+          var size = Math.random() * 9 + 5;
+          el.style.cssText = [
+            'left:'             + (Math.random() * 100) + '%',
+            'width:'            + size + 'px',
+            'height:'           + size + 'px',
+            'background:'       + palette[i % palette.length],
+            'border-radius:'    + (Math.random() > .45 ? '50%' : '3px'),
+            'animation-duration:'+ (Math.random() * 2 + 2.2) + 's',
+            'animation-delay:'  + (Math.random() * .6) + 's'
+          ].join(';');
+          document.body.appendChild(el);
+          setTimeout(function () {
+            if (el.parentNode) el.parentNode.removeChild(el);
+          }, 5500);
+        }, i * 22);
+      })(i);
+    }
+  }
+
+  /* ── Kick off ───────────────────────────────────────────── */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+}());
+</script>
+```

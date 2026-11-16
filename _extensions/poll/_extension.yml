@@ -1,0 +1,11 @@
+title: Poll
+author: Adapted from Johannes Schildgen's reveal.js-poll-plugin
+version: 1.0.0
+quarto-required: ">=1.2.0"
+contributes:
+  revealjs-plugins:
+    - name: RevealPoll
+      script:
+        - poll.js
+      stylesheet:
+        - poll.css

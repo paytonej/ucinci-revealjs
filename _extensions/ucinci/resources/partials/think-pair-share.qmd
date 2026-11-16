@@ -1,0 +1,333 @@
+<!--
+Think–Pair–Share timer (revealjs only).
+
+Usage: put the question on a slide, then add the Quarto include shortcode for
+_extensions/paytonej/ucinci/resources/partials/think-pair-share.qmd on the line below the question (written out here
+in words, because a shortcode inside this comment would still be expanded).
+
+Clicks (advances) on the slide:
+  1. THINK starts: 1:15 countdown.  When it ends, PAIR starts automatically (1:45).
+     When PAIR ends, the panel switches to SHARE.
+  2–4. Each click draws one random name from the roster (Roster.xlsx, or the
+       file named by roster_file in an earlier code cell; sample names otherwise).
+Clicking a draw step early ends the timers and jumps to SHARE.
+Click the clock to pause or resume. Stepping backward undoes the last step.
+Names are not repeated within one lecture until everyone has been called.
+Several copies can be used in one deck.
+Needs the Jupyter engine with pandas (and openpyxl for .xlsx).
+-->
+
+::: {.content-visible when-format="revealjs"}
+
+```{python}
+#| output: asis
+import json
+import pandas as pd
+
+# Roster: a spreadsheet or CSV with a "First Name" column. Set roster_file in an
+# earlier code cell to use another file; without one, sample names are drawn.
+try:
+    _rf = globals().get("roster_file", "Roster.xlsx")
+    _df = pd.read_csv(_rf) if str(_rf).lower().endswith(".csv") else pd.read_excel(_rf)
+    _first = _df["First Name"].astype(str).str.strip()
+    _last = _df["Last Name"].astype(str).str.strip() if "Last Name" in _df else pd.Series([""] * len(_df))
+    _ok = _first.ne("") & _first.ne("nan")
+    _first, _last = _first[_ok], _last[_ok]
+    _dup = _first.duplicated(keep=False)   # disambiguate shared first names with a last initial
+    _tps_names = [f"{f} {l[0]}." if d and l and l != "nan" else f
+                  for f, l, d in zip(_first, _last, _dup)]
+except Exception:
+    _tps_names = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
+
+print(f"<script>window.TPS_ROSTER = {json.dumps(_tps_names)};</script>")
+```
+
+```{=html}
+<style>
+.tps {
+  --tps-think: #d1b179;   /* Gettler gold  */
+  --tps-pair:  #e00122;   /* UC red        */
+  --tps-share: #a7a5aa;   /* Steger silver */
+  --tps-bg:    #333333;   /* Bearcats black */
+  --tps-accent: var(--tps-think);
+  margin: .4em 0 0;
+  padding: .45em .8em;
+  border-radius: 12px;
+  background: var(--tps-bg);
+  color: #fff;
+  font-size: .62em;
+  line-height: 1.25;
+  border-left: 10px solid var(--tps-accent);
+  transition: border-color .4s;
+}
+.tps[data-phase="pair"]  { --tps-accent: var(--tps-pair); }
+.tps[data-phase="share"] { --tps-accent: var(--tps-share); }
+
+.tps-row { display: flex; align-items: center; gap: 1em; }
+.tps-steps { display: flex; gap: .35em; font-weight: 700; letter-spacing: .1em; }
+.tps-steps span { padding: .1em .55em; border-radius: 6px; color: #a7a5aa; }
+.tps[data-phase="think"] .tps-steps .s-think,
+.tps[data-phase="pair"]  .tps-steps .s-pair,
+.tps[data-phase="share"] .tps-steps .s-share { background: var(--tps-accent); color: #000; }
+.tps[data-phase="pair"]  .tps-steps .s-pair  { color: #fff; }
+.tps-hint { color: #a7a5aa; font-style: italic; margin-left: auto; }
+.tps:not([data-phase="idle"]) .tps-hint { display: none; }
+
+.tps-clock {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-size: 2.1em; font-weight: 700;
+  cursor: pointer; user-select: none;
+}
+.tps[data-phase="idle"] .tps-clock,
+.tps[data-phase="share"] .tps-clock { display: none; }
+.tps-clock.paused { opacity: .45; }
+.tps-clock.paused::after { content: " ❚❚"; font-size: .45em; vertical-align: middle; }
+.tps-clock.urgent { color: var(--tps-pair); animation: tps-pulse 1s ease-in-out infinite; }
+.tps[data-phase="pair"] .tps-clock.urgent { color: #fff; }
+@keyframes tps-pulse { 50% { transform: scale(1.08); } }
+
+.tps-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.15); margin: .35em 0 .1em; overflow: hidden; }
+.tps-bar > div { height: 100%; width: 100%; background: var(--tps-accent); transform-origin: left; }
+.tps[data-phase="idle"] .tps-bar, .tps[data-phase="share"] .tps-bar { display: none; }
+
+.tps-body { display: none; margin-top: .3em; }
+.tps[data-phase="think"] .b-think,
+.tps[data-phase="pair"]  .b-pair,
+.tps[data-phase="share"] .b-share { display: block; }
+.tps-lead { font-size: 1.15em; font-weight: 700; margin: 0 0 .3em; }
+.tps-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5em; }
+.tps-cards div {
+  border: 2px solid var(--tps-think); border-radius: 8px;
+  padding: .3em .5em; text-align: center;
+}
+.tps-cards b { display: block; color: var(--tps-think); font-size: 1.1em; }
+.tps-cards small { color: #e0dfe3; }
+
+.tps-names { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5em; }
+.tps-name {
+  border: 2px dashed #a7a5aa; border-radius: 8px;
+  padding: .35em .5em; text-align: center; font-size: 1.3em; font-weight: 700;
+  min-height: 1.4em; color: #a7a5aa;
+}
+.tps-name.rolling { border-style: solid; color: #e0dfe3; }
+.tps-name.landed  { border: 2px solid #fff; color: #fff; background: rgba(224,1,34,.55);
+                    animation: tps-pop .45s cubic-bezier(.175,.885,.32,1.275); }
+@keyframes tps-pop { 0% { transform: scale(.6); } 100% { transform: scale(1); } }
+
+.tps-trigger { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
+</style>
+
+<div class="tps" data-phase="idle" data-think="75" data-pair="105">
+  <div class="tps-row">
+    <div class="tps-steps"><span class="s-think">THINK</span><span class="s-pair">PAIR</span><span class="s-share">SHARE</span></div>
+    <span class="tps-hint">click to start · 1:15 think, 1:45 pair</span>
+    <span class="tps-clock" title="Click to pause or resume">1:15</span>
+  </div>
+  <div class="tps-bar"><div></div></div>
+
+  <div class="tps-body b-think">
+    <p class="tps-lead">On your own, write down:</p>
+    <div class="tps-cards">
+      <div><b>Knowns</b><small>given data, relations that apply</small></div>
+      <div><b>Unknowns</b><small>what you are asked to find</small></div>
+      <div><b>Questions</b><small>what is unclear or missing</small></div>
+      <div><b>Hypotheses</b><small>your best guess, and why</small></div>
+    </div>
+  </div>
+
+  <div class="tps-body b-pair">
+    <p class="tps-lead">Discuss with your neighbors.</p>
+    Compare your knowns and hypotheses, resolve your questions, and <b>settle on one answer</b> you can defend.
+  </div>
+
+  <div class="tps-body b-share">
+    <p class="tps-lead">Share: who will tell us your group's answer?</p>
+    <div class="tps-names">
+      <div class="tps-name">?</div><div class="tps-name">?</div><div class="tps-name">?</div>
+    </div>
+  </div>
+
+  <span class="fragment tps-trigger" data-tps-step="start"></span>
+  <span class="fragment tps-trigger" data-tps-step="draw"></span>
+  <span class="fragment tps-trigger" data-tps-step="draw"></span>
+  <span class="fragment tps-trigger" data-tps-step="draw"></span>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  if (window.__tpsLoaded) return;      // one controller serves every copy in the deck
+  window.__tpsLoaded = true;
+
+  var CHIME = true;                    // set false to silence the phase-change chime
+  var called = [];                     // names already drawn in this lecture
+  var audioCtx = null;
+
+  function fmt(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+
+  function chime(times) {
+    if (!CHIME) return;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      for (var i = 0; i < times; i++) {
+        var t0 = audioCtx.currentTime + i * 0.35;
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.value = 880;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.6);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t0); o.stop(t0 + 0.65);
+      }
+    } catch (err) { /* audio unavailable: stay silent */ }
+  }
+
+  function pickName() {
+    var roster = window.TPS_ROSTER || [];
+    if (!roster.length) return '—';
+    var pool = roster.filter(function (n) { return called.indexOf(n) < 0; });
+    if (!pool.length) { called = []; pool = roster.slice(); }
+    var name = pool[Math.floor(Math.random() * pool.length)];
+    called.push(name);
+    return name;
+  }
+
+  /* ── One controller object per .tps panel ─────────────────── */
+  function state(root) {
+    if (root.__tps) return root.__tps;
+    var st = {
+      root: root,
+      clock: root.querySelector('.tps-clock'),
+      bar: root.querySelector('.tps-bar > div'),
+      slots: root.querySelectorAll('.tps-name'),
+      think: +root.dataset.think || 75,
+      pair: +root.dataset.pair || 105,
+      timer: null, remaining: 0, total: 0, last: 0, paused: false,
+      drawn: []
+    };
+    st.clock.addEventListener('click', function () {
+      if (!st.timer && !st.paused) return;
+      st.paused = !st.paused;
+      st.clock.classList.toggle('paused', st.paused);
+      st.last = performance.now();
+    });
+    root.__tps = st;
+    return st;
+  }
+
+  function setPhase(st, phase) { st.root.dataset.phase = phase; }
+
+  function stopTimer(st) {
+    if (st.timer) clearInterval(st.timer);
+    st.timer = null; st.paused = false;
+    st.clock.classList.remove('paused', 'urgent');
+  }
+
+  function runPhase(st, phase, seconds, next) {
+    stopTimer(st);
+    setPhase(st, phase);
+    st.total = st.remaining = seconds;
+    st.last = performance.now();
+    var tick = function () {
+      var now = performance.now();
+      if (!st.paused) st.remaining -= (now - st.last) / 1000;
+      st.last = now;
+      st.clock.textContent = fmt(st.remaining);
+      st.clock.classList.toggle('urgent', st.remaining <= 10);
+      st.bar.style.transform = 'scaleX(' + Math.max(0, st.remaining / st.total) + ')';
+      if (st.remaining <= 0) { stopTimer(st); next(); }
+    };
+    tick();
+    st.timer = setInterval(tick, 200);
+  }
+
+  function start(st) {
+    runPhase(st, 'think', st.think, function () {
+      chime(1);
+      runPhase(st, 'pair', st.pair, function () { chime(2); share(st); });
+    });
+  }
+
+  function share(st) { stopTimer(st); setPhase(st, 'share'); }
+
+  function draw(st, animate) {
+    if (st.root.dataset.phase !== 'share') share(st);
+    var slot = st.slots[st.drawn.length];
+    if (!slot) return;
+    var name = pickName();
+    st.drawn.push(name);
+    if (!animate) { slot.textContent = name; slot.className = 'tps-name landed'; return; }
+    var roster = window.TPS_ROSTER || [name], k = 0;
+    slot.className = 'tps-name rolling';
+    slot.__spin = setInterval(function () {
+      slot.textContent = roster[Math.floor(Math.random() * roster.length)];
+      if (++k >= 14) {
+        clearInterval(slot.__spin);
+        slot.textContent = name;
+        slot.className = 'tps-name landed';
+      }
+    }, 70);
+  }
+
+  function undraw(st) {
+    var name = st.drawn.pop();
+    if (name === undefined) return;
+    var i = called.lastIndexOf(name);
+    if (i >= 0) called.splice(i, 1);
+    var slot = st.slots[st.drawn.length];
+    clearInterval(slot.__spin);
+    slot.textContent = '?'; slot.className = 'tps-name';
+  }
+
+  function reset(st) {
+    stopTimer(st);
+    while (st.drawn.length) undraw(st);
+    st.clock.textContent = fmt(st.think);
+    st.bar.style.transform = 'scaleX(1)';
+    setPhase(st, 'idle');
+  }
+
+  function onFragment(e, shown) {
+    var frags = e.fragments || (e.fragment ? [e.fragment] : []);
+    frags.forEach(function (f) {
+      if (!f.dataset || !f.dataset.tpsStep) return;
+      var st = state(f.closest('.tps'));
+      if (f.dataset.tpsStep === 'start') { shown ? start(st) : reset(st); }
+      else { shown ? draw(st, true) : undraw(st); }
+    });
+  }
+
+  /* Arriving backward from a later slide shows every fragment without
+     replaying them: show SHARE with the names, but skip the timers. */
+  function onSlide(e) {
+    if (!e.currentSlide) return;
+    e.currentSlide.querySelectorAll('.tps').forEach(function (root) {
+      var st = state(root);
+      var vis = root.querySelectorAll('.tps-trigger.visible').length;
+      if (vis === 0) { if (root.dataset.phase !== 'idle') reset(st); return; }
+      if (root.dataset.phase === 'idle') {
+        share(st);
+        for (var i = 1; i < vis; i++) draw(st, false);
+      }
+    });
+  }
+
+  function init() {
+    if (typeof Reveal === 'undefined' || !Reveal.isReady || !Reveal.isReady()) {
+      if (typeof Reveal !== 'undefined' && Reveal.on) { Reveal.on('ready', init); return; }
+      setTimeout(init, 60); return;
+    }
+    if (init.done) return; init.done = true;
+    Reveal.on('fragmentshown',  function (e) { onFragment(e, true); });
+    Reveal.on('fragmenthidden', function (e) { onFragment(e, false); });
+    Reveal.on('slidechanged', onSlide);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}());
+</script>
+```
+
+:::

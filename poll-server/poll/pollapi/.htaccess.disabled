@@ -1,0 +1,13 @@
+# Block direct downloads of the SQLite database file over HTTP.
+# Works on both modern Apache (2.4+, mod_authz_core) and older cPanel setups.
+<IfModule mod_authz_core.c>
+  <Files "*.db">
+    Require all denied
+  </Files>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  <Files "*.db">
+    Order allow,deny
+    Deny from all
+  </Files>
+</IfModule>
